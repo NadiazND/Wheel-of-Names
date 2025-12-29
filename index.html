@@ -3,345 +3,427 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wheel of Names - Speed Control</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Wheel of Names - Elegant Edition</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            /* Palette & Tema */
-            --bg-gradient: radial-gradient(circle at center, #2c3e50 0%, #1a1a1a 100%);
-            --panel-bg: rgba(30, 39, 46, 0.95);
-            --primary: #3498db;
-            --accent: #f1c40f;
-            --text-white: #ffffff;
-            --text-muted: #bdc3c7;
-            --border: rgba(255,255,255,0.1);
+            /* Tema Biru Gelap Premium */
+            --sidebar-bg: rgba(15, 23, 42, 0.65); /* Transparan untuk efek Glassmorphism */
+            --border-color: rgba(255, 255, 255, 0.1);
+            --primary-blue: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-red: #ef4444;
         }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; outline: none; }
+        * { box-sizing: border-box; font-family: 'Roboto', 'Segoe UI', sans-serif; outline: none; }
 
         body {
             margin: 0; padding: 0;
-            background: var(--bg-gradient);
-            color: var(--text-white);
+            color: var(--text-main);
             height: 100vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            /* Animated Elegant Background */
+            background: linear-gradient(-45deg, #020617, #1e1b4b, #172554, #0f172a);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
         }
 
-        /* --- UI ATAS --- */
-        .top-bar {
-            position: absolute; top: 0; left: 0; width: 100%;
-            padding: 20px 30px; display: flex; justify-content: space-between;
-            align-items: center; z-index: 50; pointer-events: none;
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
+
+        /* Floating Particles (Hiasan Background) */
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.4;
+            animation: floatShape 20s infinite alternate;
+        }
+        .shape-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #4f46e5; }
+        .shape-2 { bottom: -10%; right: -10%; width: 600px; height: 600px; background: #0ea5e9; animation-delay: -5s; }
+
+        @keyframes floatShape {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 50px); }
+        }
+
+        /* --- UI LAYOUT (Z-Index harus > 0 agar di atas background) --- */
         
-        .brand-area {
-            pointer-events: auto; display: flex; align-items: center; cursor: text;
-            padding: 5px; border-radius: 5px; transition: 0.2s;
+        /* NAVBAR */
+        .navbar {
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 50;
+            background: rgba(2, 6, 23, 0.7);
+            backdrop-filter: blur(10px);
         }
-        .brand-area:hover { background: rgba(255,255,255,0.1); }
 
-        .editable-title {
-            font-size: 1.8rem; font-weight: 800; color: #fff;
-            border-bottom: 2px solid transparent; margin: 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        .brand {
+            font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; cursor: pointer;
         }
-        .editable-title:focus { border-bottom: 2px solid var(--primary); }
-        .edit-icon { margin-left: 10px; color: var(--text-muted); font-size: 1rem; opacity: 0.6; }
-        .editable-title:focus + .edit-icon { opacity: 0; }
+        .brand i { color: #fbbf24; }
 
-        .toggle-view-btn {
-            pointer-events: auto;
-            background: rgba(0,0,0,0.3); border: 1px solid var(--border); 
-            padding: 8px 15px; border-radius: 20px;
-            color: var(--text-white); cursor: pointer; font-size: 0.9rem; 
-            display: flex; align-items: center; gap: 8px; transition: 0.2s;
+        .toggle-fullscreen {
+            display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;
         }
-        .toggle-view-btn:hover { background: var(--primary); border-color: var(--primary); }
+        .chk-hide { accent-color: var(--text-muted); }
 
-        /* --- AREA UTAMA --- */
-        .canvas-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center; z-index: 10;
+        /* MAIN CONTAINER */
+        .main-container {
+            display: flex; flex: 1; height: calc(100vh - 60px); position: relative; z-index: 10;
         }
-        canvas { filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); }
+
+        /* WHEEL AREA */
+        .wheel-area {
+            flex: 1; position: relative; display: flex; justify-content: center; align-items: center; overflow: hidden;
+        }
+        canvas { filter: drop-shadow(0 20px 50px rgba(0,0,0,0.6)); }
 
         .pointer {
-            position: absolute; top: 50%; left: 50%; width: 0; height: 0; 
-            border-top: 20px solid transparent; border-bottom: 20px solid transparent;
-            border-right: 45px solid var(--text-white); 
-            z-index: 20; pointer-events: none; filter: drop-shadow(-2px 2px 2px rgba(0,0,0,0.3));
+            position: absolute; top: 50%; left: 50%;
+            width: 0; height: 0;
+            border-top: 25px solid transparent; border-bottom: 25px solid transparent;
+            border-right: 50px solid var(--accent-red);
+            z-index: 20; pointer-events: none;
+            filter: drop-shadow(-2px 2px 4px rgba(0,0,0,0.4));
         }
 
         .center-spin {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70px; height: 70px; 
-            background: white; border-radius: 50%;
-            z-index: 25; 
-            box-shadow: 0 0 0 6px rgba(255,255,255,0.2), 0 0 15px rgba(0,0,0,0.5);
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 75px; height: 75px; background: white; border-radius: 50%;
+            z-index: 25; box-shadow: 0 0 0 5px rgba(255,255,255,0.1), 0 0 30px rgba(0,0,0,0.5);
             display: flex; justify-content: center; align-items: center;
-            font-weight: 900; color: #333; font-size: 1.1rem; cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 4px solid #fff; text-transform: uppercase;
+            font-weight: 900; color: #0f172a; font-size: 1.1rem; cursor: pointer;
+            border: 4px solid #fff; transition: transform 0.1s, box-shadow 0.3s;
         }
-        .center-spin:hover { transform: translate(-50%, -50%) scale(1.15); color: var(--primary); }
+        .center-spin:hover { box-shadow: 0 0 0 8px rgba(255,255,255,0.2), 0 0 40px rgba(59, 130, 246, 0.4); }
         .center-spin:active { transform: translate(-50%, -50%) scale(0.95); }
 
-        /* --- PANEL SAMPING --- */
-        .control-panel {
-            position: absolute; top: 80px; right: 30px; bottom: 30px; width: 340px;
-            background: var(--panel-bg); border-radius: 12px; padding: 20px;
-            display: flex; flex-direction: column; 
-            backdrop-filter: blur(12px); border: 1px solid var(--border); 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6); z-index: 40;
-            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s;
+        /* SIDEBAR (Glassmorphism) */
+        .sidebar {
+            width: 360px;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(20px); /* Efek Kaca Buram */
+            -webkit-backdrop-filter: blur(20px);
+            border-left: 1px solid var(--border-color);
+            display: flex; flex-direction: column; padding: 15px;
+            transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 40; box-shadow: -10px 0 30px rgba(0,0,0,0.3);
         }
-        .control-panel.hidden { transform: translateX(120%); opacity: 0; pointer-events: none; }
 
-        .tabs { display: flex; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 4px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 8px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; border-radius: 6px; font-weight: 600; transition: 0.2s; font-size: 0.9rem; }
-        .tab-btn.active { background: var(--primary); color: white; }
+        .sidebar.hidden { margin-right: -360px; }
 
-        .setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.9rem; color: #ddd; }
-        
-        /* Speed Selection Buttons */
-        .speed-options { display: flex; gap: 5px; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 6px; }
-        .speed-btn {
-            flex: 1; border: none; background: transparent; color: var(--text-muted);
-            padding: 6px; font-size: 0.8rem; cursor: pointer; border-radius: 4px; transition: 0.2s;
+        /* TABS */
+        .tabs { display: flex; gap: 20px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); }
+        .tab-item {
+            padding-bottom: 10px; cursor: pointer; color: var(--text-muted); font-weight: 600; font-size: 0.95rem;
+            display: flex; align-items: center; gap: 6px; transition: 0.2s;
         }
-        .speed-btn:hover { background: rgba(255,255,255,0.1); color: white; }
-        .speed-btn.active { background: var(--primary); color: white; font-weight: bold; }
+        .tab-item:hover { color: white; }
+        .tab-item.active { color: white; border-bottom: 2px solid var(--primary-blue); margin-bottom: -2px; }
+        .badge { background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; }
 
-        .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
+        /* TOOLBAR */
+        .toolbar { display: flex; gap: 8px; margin-bottom: 15px; }
+        .btn-tool {
+            flex: 1; background: var(--primary-blue); border: none; color: white; padding: 10px; border-radius: 6px;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s;
+        }
+        .btn-tool:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-tool-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); }
+        .btn-tool-secondary:hover { background: rgba(255,255,255,0.1); }
+
+        /* SPEED CONTROL */
+        .speed-control {
+            display: flex; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);
+            border-radius: 6px; margin-bottom: 15px; overflow: hidden;
+        }
+        .btn-speed {
+            flex: 1; background: transparent; border: none; color: var(--text-muted); padding: 8px;
+            font-size: 0.8rem; cursor: pointer; border-right: 1px solid var(--border-color); transition: 0.2s;
+        }
+        .btn-speed:last-child { border-right: none; }
+        .btn-speed:hover { background: rgba(255,255,255,0.05); color: white; }
+        .btn-speed.active { background: rgba(59, 130, 246, 0.2); color: var(--primary-blue); font-weight: bold; }
+
+        /* OPTIONS ROW (Toggle) */
+        .option-row {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+            font-size: 0.9rem; color: #cbd5e1; background: rgba(255,255,255,0.03);
+            padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);
+        }
+        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #555; transition: .3s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(22px); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 2px; bottom: 2px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-blue); }
+        input:checked + .slider:before { transform: translateX(18px); }
 
-        .action-group { display: flex; gap: 8px; margin-bottom: 10px; }
-        .btn-action { 
-            flex: 1; padding: 8px; border: 1px solid var(--primary); 
-            background: rgba(52, 152, 219, 0.1); color: var(--primary); 
-            border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; 
-            transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; 
+        /* TEXTAREA */
+        textarea {
+            flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: white;
+            padding: 15px; border-radius: 8px; resize: none; font-size: 1rem; line-height: 1.6;
         }
-        .btn-action:hover { background: var(--primary); color: white; }
+        textarea:focus { border-color: var(--primary-blue); background: rgba(0,0,0,0.5); }
 
-        textarea { 
-            flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border); 
-            color: white; border-radius: 8px; padding: 12px; resize: none; 
-            margin-bottom: 10px; font-size: 0.95rem; line-height: 1.5;
+        /* RESULTS */
+        .results-container {
+            flex: 1; overflow-y: auto; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color);
+            border-radius: 8px; display: none;
         }
-        textarea:focus { border-color: var(--primary); background: rgba(0,0,0,0.4); }
+        .result-item {
+            padding: 12px 15px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem;
+            display: flex; justify-content: space-between; animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
 
-        .results-list { flex: 1; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 5px; display: none; }
-        .results-list.active { display: block; }
-        .result-item { 
-            display: flex; justify-content: space-between; padding: 10px; 
-            border-bottom: 1px solid var(--border); font-size: 0.9rem; 
-            align-items: center; animation: slideIn 0.3s ease;
+        /* MODAL */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center;
+            z-index: 100; backdrop-filter: blur(8px);
         }
-        .result-item:last-child { border-bottom: none; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-
-        /* --- MODAL --- */
-        .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); display: none; 
-            justify-content: center; align-items: center; z-index: 100; 
-            backdrop-filter: blur(5px); 
+        .modal-content {
+            background: rgba(30, 41, 59, 0.9); padding: 40px; border-radius: 16px; text-align: center;
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            max-width: 450px; width: 90%; animation: zoomPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .modal-content { 
-            background: #2d3436; padding: 40px; border-radius: 20px; 
-            text-align: center; box-shadow: 0 0 60px rgba(52, 152, 219, 0.3); 
-            border: 1px solid var(--border); max-width: 90%; width: 400px;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
-        .winner-title { color: #aaa; margin: 0; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
-        .winner-name { 
-            font-size: 3.5rem; font-weight: 800; margin: 15px 0 30px 0;
-            background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%);
+        .winner-title { color: #94a3b8; letter-spacing: 1px; font-size: 0.9rem; text-transform: uppercase; }
+        .winner-name {
+            font-size: 3.5rem; font-weight: 800; margin: 20px 0;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            word-wrap: break-word; line-height: 1.1;
         }
-        .btn-close { 
-            background: var(--primary); border: none; padding: 12px 40px; 
-            color: white; border-radius: 50px; font-weight: bold; cursor: pointer; 
-            font-size: 1.1rem; box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
-            transition: 0.2s;
+        .btn-modal {
+            background: var(--primary-blue); color: white; border: none; padding: 12px 40px;
+            border-radius: 30px; cursor: pointer; font-weight: bold; font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: 0.2s;
         }
-        .btn-close:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(52, 152, 219, 0.6); }
-        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .btn-modal:hover { transform: scale(1.05); }
+        @keyframes zoomPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         @media (max-width: 768px) {
-            .control-panel { 
-                top: auto; bottom: 0; left: 0; right: 0; width: 100%; height: 50vh; 
-                border-radius: 20px 20px 0 0; transform: translateY(0); 
-            }
-            .control-panel.hidden { transform: translateY(100%); opacity: 1; }
-            .canvas-container { height: 55%; top: 0; }
-            .top-bar { padding: 15px; } 
-            .editable-title { font-size: 1.4rem; }
+            .main-container { flex-direction: column; }
+            .sidebar { width: 100%; height: 50%; margin-right: 0; border-left: none; border-top: 1px solid var(--border-color); }
+            .sidebar.hidden { display: none; }
+            .wheel-area { height: 50%; }
         }
     </style>
 </head>
 <body>
 
-<div class="top-bar">
-    <div class="brand-area" id="brandAreaTitle">
-        <h1 class="editable-title" id="pageTitle" contenteditable="true">Wheel of Names</h1>
-        <i class="fas fa-pen edit-icon"></i>
-    </div>
-    <button class="toggle-view-btn" onclick="togglePanel()">
-        <i class="fas fa-cog"></i> <span id="toggleText">Opsi</span>
-    </button>
-</div>
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
 
-<div class="canvas-container" id="wheelContainer">
-    <div class="pointer" id="pointerArrow"></div>
-    <div class="center-spin" id="spinBtn">SPIN</div>
-    <canvas id="wheelCanvas"></canvas>
-</div>
-
-<div class="control-panel" id="controlPanel">
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('entries')">Daftar Nama</button>
-        <button class="tab-btn" onclick="switchTab('results')">Riwayat Hasil</button>
+    <div class="navbar">
+        <div class="brand" id="editableTitle">
+            <span id="pageTitle" contenteditable="true">Wheel of Names</span>
+            <i class="fas fa-pen" style="font-size: 0.8rem; opacity: 0.7;"></i>
+        </div>
+        <label class="toggle-fullscreen">
+            <input type="checkbox" class="chk-hide" id="togglePanel">
+            Hide Panel
+        </label>
     </div>
 
-    <div id="tab-entries" style="display: flex; flex-direction: column; flex: 1;">
-        <div class="setting-row">
-            <span>Kecepatan Putar</span>
-            <div class="speed-options">
-                <button class="speed-btn" onclick="setSpeed('slow')" id="btnSlow">Lambat</button>
-                <button class="speed-btn active" onclick="setSpeed('normal')" id="btnNormal">Normal</button>
-                <button class="speed-btn" onclick="setSpeed('fast')" id="btnFast">Cepat</button>
-            </div>
-        </div>
-
-        <div class="setting-row">
-            <span>Pop-up Pemenang</span>
-            <label class="switch">
-                <input type="checkbox" id="popupToggle" checked>
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="setting-row">
-            <span>Hapus Nama Otomatis</span>
-            <label class="switch">
-                <input type="checkbox" id="autoRemoveToggle">
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <div class="action-group">
-            <button class="btn-action" onclick="shuffleNames()"><i class="fas fa-random"></i> Acak</button>
-            <button class="btn-action" onclick="sortNames()"><i class="fas fa-sort-alpha-down"></i> Urutkan</button>
-        </div>
+    <div class="main-container">
         
-        <textarea id="nameInput" placeholder="Masukkan nama (pisahkan dengan Enter)..."></textarea>
+        <div class="wheel-area" id="wheelContainer">
+            <div class="pointer" id="pointerArrow"></div>
+            <div class="center-spin" id="spinBtn">SPIN</div>
+            <canvas id="wheelCanvas"></canvas>
+        </div>
+
+        <div class="sidebar" id="sidebarPanel">
+            
+            <div class="tabs">
+                <div class="tab-item active" onclick="switchTab('entries')">
+                    Entries <span class="badge" id="countBadge">8</span>
+                </div>
+                <div class="tab-item" onclick="switchTab('results')">
+                    Results <span class="badge" id="resultBadge">0</span>
+                </div>
+            </div>
+
+            <div id="tab-entries" style="display: flex; flex-direction: column; flex: 1;">
+                
+                <div class="toolbar">
+                    <button class="btn-tool" onclick="shuffleNames()"><i class="fas fa-random"></i> Shuffle</button>
+                    <button class="btn-tool" onclick="sortNames()"><i class="fas fa-sort-alpha-down"></i> Sort</button>
+                    <button class="btn-tool btn-tool-secondary"><i class="fas fa-image"></i> Image</button>
+                </div>
+
+                <div class="speed-control">
+                    <button class="btn-speed" onclick="setSpeed('slow')" id="btnSlow">Lambat</button>
+                    <button class="btn-speed active" onclick="setSpeed('normal')" id="btnNormal">Normal</button>
+                    <button class="btn-speed" onclick="setSpeed('fast')" id="btnFast">Cepat</button>
+                </div>
+
+                <div class="option-row">
+                    <span>Tampilkan Pop-up?</span>
+                    <label class="switch">
+                        <input type="checkbox" id="popupToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="option-row">
+                    <span>Hapus otomatis?</span>
+                    <label class="switch">
+                        <input type="checkbox" id="autoRemoveToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <textarea id="nameInput" placeholder="Ketik nama di sini..."></textarea>
+            </div>
+
+            <div id="tab-results" class="results-container">
+                <div style="padding: 20px; text-align: center; color: #94a3b8;">Belum ada hasil.</div>
+            </div>
+
+        </div>
     </div>
 
-    <div id="tab-results" class="results-list">
-        <div style="text-align: center; color: #777; margin-top: 20px;" id="emptyResultMsg">Belum ada pemenang.</div>
+    <div class="modal-overlay" id="winnerModal">
+        <div class="modal-content">
+            <div class="winner-title">Selamat Kepada</div>
+            <div class="winner-name" id="winnerText">Nama</div>
+            <button class="btn-modal" onclick="closeModal()">Lanjut</button>
+        </div>
     </div>
-</div>
-
-<div class="modal-overlay" id="winnerModal">
-    <div class="modal-content">
-        <h3 class="winner-title">Selamat Kepada</h3>
-        <div class="winner-name" id="winnerText">Nama</div>
-        <button class="btn-close" onclick="closeModal()">Lanjut</button>
-    </div>
-</div>
 
 <script>
-    // --- VARIABLES ---
     const canvas = document.getElementById('wheelCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('wheelContainer');
     const pointer = document.getElementById('pointerArrow');
     const spinBtn = document.getElementById('spinBtn');
     const nameInput = document.getElementById('nameInput');
-    const resultsList = document.getElementById('tab-results');
-    const pageTitle = document.getElementById('pageTitle');
+    const resultContainer = document.getElementById('tab-results');
     const modal = document.getElementById('winnerModal');
-    const popupToggle = document.getElementById('popupToggle');
-    const autoRemoveToggle = document.getElementById('autoRemoveToggle');
+    const sidebar = document.getElementById('sidebarPanel');
+    const togglePanelBtn = document.getElementById('togglePanel');
     
-    // Speed Buttons
+    const countBadge = document.getElementById('countBadge');
+    const resultBadge = document.getElementById('resultBadge');
+
+    // Toggles
+    const autoRemoveToggle = document.getElementById('autoRemoveToggle');
+    const popupToggle = document.getElementById('popupToggle'); // Toggle Baru
+    
     const btnSlow = document.getElementById('btnSlow');
     const btnNormal = document.getElementById('btnNormal');
     const btnFast = document.getElementById('btnFast');
 
-    // Data Awal (8 Nama)
-    const defaultNames = ["Budi", "Siti", "Agus", "Dewi", "Eko", "Fitri", "Gilang", "Hani"];
-    const palette = ['#d91a2f', '#ecb41c', '#099b2c', '#3f73ec'];
+    const defaultNames = ["Ali", "Hanna", "Fatima", "Charles", "Eric", "Beatriz", "Diya", "Der"];
+    const palette = ['#d91a2f', '#facc15', '#16a34a', '#2563eb'];
 
     let names = [], colors = [];
     let startAngle = 0, arc = 0;
     
-    // Spin Logic
     let isSpinning = false;
     let spinAngleStart = 0;
     let spinTime = 0;
     let spinTimeTotal = 0;
     
-    // Speed Configuration (Duration in ms)
     let currentSpeed = 'normal';
     const speedConfig = {
-        slow: { minTime: 12000, maxTime: 15000 },  // 12-15 detik (Lambat)
-        normal: { minTime: 6000, maxTime: 8000 },  // 6-8 detik (Normal)
-        fast: { minTime: 2500, maxTime: 3500 }     // 2.5-3.5 detik (Cepat)
+        slow: { minTime: 24000, maxTime: 25000 },
+        normal: { minTime: 14000, maxTime: 15000 },
+        fast: { minTime: 4000, maxTime: 5000 }
     };
 
     let isIdle = true, idleAnimationFrame;
     let centerX, centerY, outsideRadius;
+    let resultCount = 0;
 
     window.onload = () => {
-        loadData(); resizeCanvas(); window.addEventListener('resize', resizeCanvas);
-        idleLoop(); spinBtn.addEventListener('click', startSpin);
-        document.getElementById('brandAreaTitle').addEventListener('click', () => pageTitle.focus());
-        pageTitle.addEventListener('blur', () => localStorage.setItem('wheelTitleSimple', pageTitle.innerText));
-        if(localStorage.getItem('wheelTitleSimple')) pageTitle.innerText = localStorage.getItem('wheelTitleSimple');
+        loadData();
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        idleLoop();
+        
+        spinBtn.addEventListener('click', startSpin);
+        
+        togglePanelBtn.addEventListener('change', (e) => {
+            if(e.target.checked) sidebar.classList.add('hidden');
+            else sidebar.classList.remove('hidden');
+            setTimeout(resizeCanvas, 350);
+        });
+
+        const titleEl = document.getElementById('pageTitle');
+        titleEl.addEventListener('blur', () => localStorage.setItem('wheelTitleElegant', titleEl.innerText));
+        if(localStorage.getItem('wheelTitleElegant')) titleEl.innerText = localStorage.getItem('wheelTitleElegant');
     };
 
     nameInput.addEventListener('input', () => { updateEngine(); saveData(); });
 
-    // --- SPEED CONTROL ---
     function setSpeed(speed) {
         if(isSpinning) return;
         currentSpeed = speed;
-        // Update UI
         [btnSlow, btnNormal, btnFast].forEach(btn => btn.classList.remove('active'));
         if(speed === 'slow') btnSlow.classList.add('active');
         if(speed === 'normal') btnNormal.classList.add('active');
         if(speed === 'fast') btnFast.classList.add('active');
     }
 
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        
+        if(tab === 'entries') {
+            document.getElementById('tab-entries').style.display = 'flex';
+            document.getElementById('tab-results').style.display = 'none';
+        } else {
+            document.getElementById('tab-entries').style.display = 'none';
+            document.getElementById('tab-results').style.display = 'block';
+        }
+    }
+
     function idleLoop() {
         if (!isSpinning && isIdle) {
-            startAngle += 0.002; drawWheel(); idleAnimationFrame = requestAnimationFrame(idleLoop);
+            startAngle += 0.002; 
+            drawWheel(); 
+            idleAnimationFrame = requestAnimationFrame(idleLoop);
         }
     }
 
     function resizeCanvas() {
-        const width = container.clientWidth; const height = container.clientHeight;
-        canvas.width = width; canvas.height = height;
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        
+        canvas.width = width;
+        canvas.height = height;
+
         const minDim = Math.min(width, height);
         outsideRadius = (minDim / 2) * 0.85; 
-        centerX = width / 2; centerY = height / 2;
-        const pointerOffset = outsideRadius + 30; 
+        
+        centerX = width / 2;
+        centerY = height / 2;
+        
+        const pointerOffset = outsideRadius + 25; 
         pointer.style.transform = `translate(-50%, -50%) translate(${pointerOffset}px, 0)`;
+
         if(names.length > 0) drawWheel();
     }
 
     function updateEngine() {
         names = nameInput.value.split('\n').filter(n => n.trim() !== '');
+        countBadge.innerText = names.length;
+        
         colors = [];
         if (names.length > 0) {
             colors[0] = palette[0];
@@ -350,6 +432,7 @@
                 let firstColor = colors[0];
                 let candidates = palette.filter(c => c !== prevColor);
                 if (i === names.length - 1) candidates = candidates.filter(c => c !== firstColor);
+
                 if(candidates.length > 0) {
                     let preferred = palette[i % palette.length];
                     colors[i] = candidates.includes(preferred) ? preferred : candidates[0];
@@ -364,96 +447,151 @@
     function drawWheel() {
         if (names.length === 0) return;
         arc = Math.PI * 2 / names.length;
+        
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
         let fontSize = outsideRadius / 14;
         if (names.length > 15) fontSize = outsideRadius / 18;
-        if (names.length > 30) fontSize = outsideRadius / 24;
-        ctx.font = 'bold ' + fontSize + 'px "Segoe UI", sans-serif'; ctx.lineWidth = 2;
+        if (names.length > 30) fontSize = outsideRadius / 25;
+        
+        ctx.font = 'bold ' + fontSize + 'px "Segoe UI", sans-serif';
+        ctx.lineWidth = 2;
 
         for (let i = 0; i < names.length; i++) {
             const angle = startAngle + i * arc;
+            
             ctx.fillStyle = colors[i];
-            ctx.beginPath(); ctx.moveTo(centerX, centerY);
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
             ctx.arc(centerX, centerY, outsideRadius, angle, angle + arc);
-            ctx.lineTo(centerX, centerY); ctx.fill();
-            ctx.strokeStyle = "rgba(0,0,0,0.1)"; ctx.stroke();
-            ctx.save(); ctx.fillStyle = "white"; ctx.shadowColor = "rgba(0,0,0,0.8)"; ctx.shadowBlur = 3;
-            ctx.translate(centerX, centerY); ctx.rotate(angle + arc / 2); ctx.textAlign = "right";
-            ctx.fillText(names[i], outsideRadius - 25, fontSize / 3); ctx.restore();
+            ctx.lineTo(centerX, centerY);
+            ctx.fill();
+            
+            ctx.save();
+            ctx.fillStyle = "white";
+            ctx.shadowColor = "rgba(0,0,0,0.5)";
+            ctx.shadowBlur = 4;
+            ctx.translate(centerX, centerY);
+            ctx.rotate(angle + arc / 2);
+            ctx.textAlign = "right";
+            ctx.fillText(names[i], outsideRadius - 20, fontSize / 3);
+            ctx.restore();
         }
-        ctx.beginPath(); ctx.arc(centerX, centerY, outsideRadius, 0, 2 * Math.PI);
-        ctx.lineWidth = 12; ctx.strokeStyle = "#1e272e"; ctx.stroke();
-        ctx.beginPath(); ctx.arc(centerX, centerY, outsideRadius + 6, 0, 2 * Math.PI);
-        ctx.lineWidth = 2; ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.stroke();
     }
 
     function startSpin() {
         if (isSpinning || names.length < 1) return;
-        isIdle = false; cancelAnimationFrame(idleAnimationFrame);
-        isSpinning = true; spinBtn.style.pointerEvents = "none"; spinBtn.style.opacity = "0.7";
-
-        // Setup Speed Duration
+        
+        isIdle = false; 
+        cancelAnimationFrame(idleAnimationFrame);
+        isSpinning = true;
+        
         const config = speedConfig[currentSpeed];
         spinTimeTotal = Math.random() * (config.maxTime - config.minTime) + config.minTime;
-        
         spinAngleStart = Math.random() * 10 + 10; 
         spinTime = 0; 
+        
         rotateWheel();
     }
 
     function rotateWheel() {
         spinTime += 30;
-        if (spinTime >= spinTimeTotal) { stopRotateWheel(); return; }
+        if (spinTime >= spinTimeTotal) {
+            stopRotateWheel();
+            return;
+        }
         
-        // --- LOGIKA ANIMASI BARU (EaseOutQuad) ---
-        // p berjalan dari 0 sampai 1
         const p = spinTime / spinTimeTotal;
-        
-        // currentSpeedRotation adalah kecepatan sudut saat ini.
-        // (1 - p^2) akan mulai dari 1 (cepat) dan melambat secara kurva parabola ke 0.
-        // Ini menciptakan efek "gliding" yang mulus tanpa rem mendadak.
         const currentSpeedRotation = spinAngleStart * (1 - Math.pow(p, 2)); 
         
         startAngle += (currentSpeedRotation * Math.PI / 180);
-        drawWheel(); requestAnimationFrame(rotateWheel);
+        drawWheel();
+        requestAnimationFrame(rotateWheel);
     }
 
     function stopRotateWheel() {
-        isSpinning = false; spinBtn.style.pointerEvents = "auto"; spinBtn.style.opacity = "1";
-        const degrees = startAngle * 180 / Math.PI; const arcd = arc * 180 / Math.PI;
+        isSpinning = false;
+        
+        const degrees = startAngle * 180 / Math.PI;
+        const arcd = arc * 180 / Math.PI;
         const index = Math.floor((360 - degrees % 360) / arcd);
-        handleWinnerResult(names[index]);
+        
+        handleWinner(names[index]);
     }
 
-    function handleWinnerResult(winner) {
-        const div = document.createElement('div'); div.className = 'result-item';
-        div.innerHTML = `<span>${winner}</span> <i class="fas fa-check" style="color:#2ecc71"></i>`;
-        const emptyMsg = document.getElementById('emptyResultMsg');
-        if(emptyMsg) emptyMsg.style.display = 'none';
-        resultsList.prepend(div);
-        if (autoRemoveToggle.checked) removeName(winner);
+    function handleWinner(winner) {
+        // Cek Toggle Popup sebelum menampilkan Modal
         if (popupToggle.checked) {
             document.getElementById('winnerText').innerText = winner;
             modal.style.display = 'flex';
         } else {
-            spinBtn.innerText = "WIN!"; spinBtn.style.color = "#f1c40f";
-            setTimeout(() => { spinBtn.innerText = "SPIN"; spinBtn.style.color = "#333"; }, 2000);
+            // Jika popup mati, kasih feedback visual sedikit di tombol
+            const originalText = spinBtn.innerText;
+            spinBtn.innerText = "WIN!";
+            spinBtn.style.color = "#facc15";
+            setTimeout(() => {
+                spinBtn.innerText = originalText;
+                spinBtn.style.color = "";
+            }, 2000);
+        }
+        
+        resultCount++;
+        resultBadge.innerText = resultCount;
+        
+        const div = document.createElement('div');
+        div.className = 'result-item';
+        div.innerHTML = `<span>${resultCount}. ${winner}</span> <span><i class="fas fa-check" style="color:#22c55e"></i></span>`;
+        
+        if(resultContainer.children[0] && resultContainer.children[0].innerText.includes("Belum")) {
+            resultContainer.innerHTML = '';
+        }
+        resultContainer.prepend(div);
+
+        if (autoRemoveToggle.checked) {
+            const arr = nameInput.value.split('\n').filter(n => n.trim() !== '');
+            const idx = arr.indexOf(winner);
+            if(idx > -1) {
+                arr.splice(idx, 1);
+                nameInput.value = arr.join('\n');
+                updateEngine();
+                saveData();
+            }
         }
     }
-    function closeModal() { modal.style.display = 'none'; }
 
-    function removeName(name) {
-        const arr = nameInput.value.split('\n').filter(n => n.trim() !== '');
-        const index = arr.indexOf(name);
-        if (index > -1) { arr.splice(index, 1); nameInput.value = arr.join('\n'); updateEngine(); saveData(); }
+    function closeModal() {
+        modal.style.display = 'none';
     }
-    function shuffleNames() { if(isSpinning) return; let arr = nameInput.value.split('\n').filter(n => n.trim() !== ''); for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } nameInput.value = arr.join('\n'); updateEngine(); saveData(); }
-    function sortNames() { if(isSpinning) return; let arr = nameInput.value.split('\n').filter(n => n.trim() !== ''); arr.sort((a,b) => a.localeCompare(b)); nameInput.value = arr.join('\n'); updateEngine(); saveData(); }
-    function togglePanel() { const panel = document.getElementById('controlPanel'); const txt = document.getElementById('toggleText'); panel.classList.toggle('hidden'); txt.innerText = panel.classList.contains('hidden') ? "Menu" : "Tutup"; setTimeout(resizeCanvas, 400); }
-    function switchTab(tabName) { document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active')); event.target.classList.add('active'); document.getElementById('tab-entries').style.display = tabName === 'entries' ? 'flex' : 'none'; document.getElementById('tab-results').classList.toggle('active', tabName !== 'entries'); }
+
+    function shuffleNames() {
+        if(isSpinning) return;
+        let arr = nameInput.value.split('\n').filter(n => n.trim() !== '');
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        nameInput.value = arr.join('\n');
+        updateEngine(); saveData();
+    }
+
+    function sortNames() {
+        if(isSpinning) return;
+        let arr = nameInput.value.split('\n').filter(n => n.trim() !== '');
+        arr.sort((a,b) => a.localeCompare(b));
+        nameInput.value = arr.join('\n');
+        updateEngine(); saveData();
+    }
+
+    function loadData() {
+        const d = localStorage.getItem('wheelData_Elegant');
+        nameInput.value = d ? d : defaultNames.join('\n');
+        updateEngine();
+    }
     
-    function loadData() { const d = localStorage.getItem('wheelData_Speed'); nameInput.value = d ? d : defaultNames.join('\n'); updateEngine(); }
-    function saveData() { localStorage.setItem('wheelData_Speed', nameInput.value); }
+    function saveData() {
+        localStorage.setItem('wheelData_Elegant', nameInput.value);
+    }
+
 </script>
 </body>
 </html>
