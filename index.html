@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wheel of Names - Responsive Dark</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #121212;
+            --panel-bg: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --primary: #bb86fc;
+            --primary-hover: #9b59b6;
+            --accent: #cf6679;
+            --border: #333;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; outline: none; }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden; /* Mencegah scroll pada body utama */
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 350px;
+            min-width: 300px;
+            background: var(--panel-bg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            z-index: 20;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .header h2 { margin: 0; font-size: 1.2rem; color: var(--primary); }
+
+        .toolbar { display: flex; gap: 5px; margin-bottom: 10px; }
+        .tool-btn {
+            background: #333; border: 1px solid var(--border);
+            color: var(--text-main); padding: 8px; border-radius: 4px;
+            cursor: pointer; flex: 1; font-size: 0.8rem; transition: 0.2s;
+        }
+        .tool-btn:hover { background: #444; }
+
+        textarea {
+            flex: 1;
+            background: #2d2d2d; border: 1px solid var(--border);
+            color: var(--text-main); padding: 10px; border-radius: 5px;
+            resize: none; font-size: 14px; margin-bottom: 10px;
+        }
+
+        .settings-box {
+            background: #252525; padding: 10px; border-radius: 5px;
+            margin-bottom: 10px; font-size: 0.9rem;
+        }
+        
+        .setting-row { display: flex; justify-content: space-between; align-items: center; }
+        select { background: #333; color: white; border: 1px solid var(--border); padding: 5px; border-radius: 3px; }
+
+        .results-container {
+            height: 120px; overflow-y: auto; background: #252525;
+            border-radius: 5px; padding: 5px; margin-bottom: 10px;
+            border: 1px solid var(--border);
+        }
+        .result-item {
+            padding: 5px 10px; border-bottom: 1px solid #333;
+            font-size: 0.85rem; display: flex; justify-content: space-between;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .btn-spin {
+            padding: 15px; border: none; border-radius: 5px;
+            cursor: pointer; font-weight: bold; font-size: 1.1rem;
+            background: var(--primary); color: #000; width: 100%;
+            box-shadow: 0 0 15px rgba(187, 134, 252, 0.4);
+            transition: 0.2s;
+        }
+        .btn-spin:hover { background: var(--primary-hover); }
+        .btn-spin:disabled { background: #555; cursor: not-allowed; box-shadow: none; }
+
+        /* --- MAIN DISPLAY (RESPONSIVE WHEEL) --- */
+        .main-display {
+            flex: 1;
+            position: relative;
+            background-image: radial-gradient(#333 1px, transparent 1px);
+            background-size: 30px 30px;
+            overflow: hidden; /* Penting agar canvas tidak stretch layout */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        /* Canvas responsif dihandle via JS, tapi CSS dasar perlu reset */
+        canvas {
+            display: block;
+            /* Ukuran diatur JS */
+            filter: drop-shadow(0 0 25px rgba(0,0,0,0.6));
+        }
+
+        /* Pointer */
+        .pointer {
+            position: absolute;
+            top: 50%; left: 50%;
+            /* Transform akan diupdate via JS agar nempel di sisi roda */
+            transform-origin: center;
+            width: 0; height: 0; 
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid white;
+            z-index: 30;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));
+            pointer-events: none; /* Agar klik tembus ke canvas */
+            transition: transform 0.1s; /* Smooth resize */
+        }
+        
+        .center-circle {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px; height: 50px;
+            background: white; border-radius: 50%;
+            z-index: 25;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            display: flex; justify-content: center; align-items: center;
+            color: #333; font-size: 20px;
+            pointer-events: none;
+        }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); display: none;
+            justify-content: center; align-items: center; z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: var(--panel-bg); padding: 30px; border-radius: 15px;
+            text-align: center; border: 1px solid var(--border); width: 90%; max-width: 400px;
+            animation: zoomIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+        .winner-name { font-size: 2.5rem; color: var(--primary); margin: 20px 0; font-weight: 800; word-wrap: break-word; }
+        .modal-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+        .btn-modal { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; flex: 1; }
+        .btn-close { background: #555; }
+        .btn-remove { background: var(--accent); }
+
+        @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* RESPONSIVE MOBILE */
+        @media (max-width: 768px) {
+            .container { flex-direction: column-reverse; }
+            .sidebar { 
+                width: 100%; 
+                height: 45%; /* Sidebar mengambil 45% layar bawah */
+                border-right: none; 
+                border-top: 1px solid var(--border); 
+            }
+            .main-display { height: 55%; } /* Roda mengambil 55% layar atas */
+            .btn-spin { font-size: 1rem; padding: 10px; }
+            .header h2 { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="header">
+            <h2>Wheel Pro</h2>
+            <span id="entryCount" style="color: var(--text-muted); font-size: 0.8rem;">0 Entries</span>
+        </div>
+
+        <div class="toolbar">
+            <button class="tool-btn" onclick="shuffleNames()"><i class="fas fa-random"></i> Shuffle</button>
+            <button class="tool-btn" onclick="sortNames()"><i class="fas fa-sort-alpha-down"></i> Sort</button>
+            <button class="tool-btn" onclick="resetDefault()"><i class="fas fa-undo"></i> Reset</button>
+        </div>
+
+        <textarea id="nameInput" placeholder="Masukkan nama..."></textarea>
+
+        <div class="settings-box">
+            <div class="setting-row">
+                <label><i class="fas fa-tachometer-alt"></i> Speed</label>
+                <select id="speedSelect">
+                    <option value="5000">Cepat (1s)</option>
+                    <option value="15000" selected>Normal (3s)</option>
+                    <option value="25000">Lambat (5s)</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 5px; color: var(--text-muted); font-size: 0.8rem;">Result History:</div>
+        <div class="results-container" id="resultsList">
+            <div class="result-item" style="justify-content: center; color: #555;">Empty</div>
+        </div>
+
+        <button class="btn-spin" id="spinBtn" onclick="startSpin()">SPIN</button>
+    </div>
+
+    <div class="main-display" id="wheelContainer">
+        <div class="pointer" id="pointerArrow"></div>
+        <div class="center-circle"><i class="fas fa-star"></i></div>
+        <canvas id="wheelCanvas"></canvas>
+    </div>
+</div>
+
+<div class="modal-overlay" id="winnerModal">
+    <div class="modal-content">
+        <div style="color: #aaa;">Pemenangnya adalah:</div>
+        <div class="winner-name" id="winnerText">NAMA</div>
+        <div class="modal-buttons">
+            <button class="btn-modal btn-close" onclick="closeModal(false)">Tutup</button>
+            <button class="btn-modal btn-remove" onclick="closeModal(true)">Hapus & Tutup</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- VARIABLES ---
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('wheelContainer');
+    const pointer = document.getElementById('pointerArrow');
+    
+    // Inputs
+    const nameInput = document.getElementById('nameInput');
+    const spinBtn = document.getElementById('spinBtn');
+    const speedSelect = document.getElementById('speedSelect');
+    const entryCount = document.getElementById('entryCount');
+    const resultsList = document.getElementById('resultsList');
+    const modal = document.getElementById('winnerModal');
+    const winnerText = document.getElementById('winnerText');
+
+    // State
+    let names = [];
+    let colors = [];
+    let startAngle = 0;
+    let arc = 0;
+    let spinTimeout = null;
+    let spinAngleStart = 0;
+    let spinTime = 0;
+    let spinTimeTotal = 0;
+    let isSpinning = false;
+    let currentWinner = "";
+    
+    // Dynamic Dimensions
+    let centerX, centerY, outsideRadius, textRadius, insideRadius;
+
+    const defaultNames = ["Arya", "Budi", "Citra", "Dewi", "Eko", "Fanny", "Gilang", "Hana"];
+    const palette = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#96CEB4', '#D4A5A5', '#9B59B6', '#3498DB'];
+
+    // --- INITIALIZATION ---
+    window.onload = () => {
+        loadData();
+        resizeCanvas(); // Init size
+        window.addEventListener('resize', resizeCanvas); // Responsive Listener
+        
+        // Click-to-spin listener
+        container.addEventListener('click', (e) => {
+            if(e.target !== spinBtn && !isSpinning && e.target.closest('.main-display')) {
+                startSpin();
+            }
+        });
+    };
+
+    nameInput.addEventListener('input', () => { updateEngine(); saveData(); });
+
+    // --- RESPONSIVE LOGIC ---
+    function resizeCanvas() {
+        // Ambil dimensi kontainer saat ini
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+
+        // Set ukuran canvas
+        canvas.width = width;
+        canvas.height = height;
+
+        // Hitung radius agar pas di layar (ambil sisi terpendek)
+        // Kurangi padding 40px (20px tiap sisi) untuk safe area
+        const minDim = Math.min(width, height);
+        outsideRadius = (minDim / 2) * 0.90; // 90% dari setengah dimensi (padding 10%)
+        
+        // Update koordinat tengah
+        centerX = width / 2;
+        centerY = height / 2;
+        
+        textRadius = outsideRadius * 0.6; // Posisi teks
+        insideRadius = outsideRadius * 0.2; // Lubang tengah
+
+        // Update Posisi Pointer secara CSS agar menempel di atas roda
+        // Pointer ada di tengah (50%, 50%). Kita geser Y ke atas sejauh radius + sedikit margin
+        pointer.style.transform = `translate(-50%, -${outsideRadius + 25}px)`;
+
+        // Gambar ulang
+        if(names.length > 0) drawWheel();
+    }
+
+    // --- ENGINE ---
+    function updateEngine() {
+        names = nameInput.value.split('\n').filter(n => n.trim() !== '');
+        entryCount.innerText = `${names.length} Entries`;
+        colors = names.map((_, i) => palette[i % palette.length]);
+        drawWheel();
+    }
+
+    function drawWheel() {
+        if (names.length === 0) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            return;
+        }
+
+        arc = Math.PI * 2 / names.length;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Setup font size dinamis berdasarkan radius
+        // Semakin kecil layar, font semakin kecil
+        let fontSize = outsideRadius / 10; 
+        if(names.length > 10) fontSize = outsideRadius / 15;
+        if(names.length > 20) fontSize = outsideRadius / 20;
+        
+        ctx.font = 'bold ' + fontSize + 'px "Segoe UI", sans-serif';
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#121212"; // Garis pemisah gelap
+
+        for (let i = 0; i < names.length; i++) {
+            const angle = startAngle + i * arc;
+            
+            ctx.fillStyle = colors[i];
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, outsideRadius, angle, angle + arc, false);
+            ctx.arc(centerX, centerY, insideRadius, angle + arc, angle, true);
+            ctx.stroke();
+            ctx.fill();
+
+            ctx.save();
+            ctx.fillStyle = "white";
+            ctx.shadowColor = "rgba(0,0,0,0.5)";
+            ctx.shadowBlur = 2;
+            
+            ctx.translate(centerX, centerY);
+            ctx.rotate(angle + arc / 2);
+            
+            const text = names[i];
+            ctx.textAlign = "right";
+            // Padding teks dari pinggir roda
+            ctx.fillText(text, outsideRadius - 15, fontSize / 3);
+            ctx.restore();
+        }
+    }
+
+    // --- SPINNING ---
+    function startSpin() {
+        if (isSpinning || names.length < 1) return;
+
+        isSpinning = true;
+        spinBtn.disabled = true;
+        spinBtn.style.opacity = "0.5";
+        
+        // Setup values
+        spinAngleStart = Math.random() * 10 + 10;
+        spinTime = 0;
+        spinTimeTotal = parseInt(speedSelect.value); // Ambil value 5000/15000/25000
+
+        rotateWheel();
+    }
+
+    function rotateWheel() {
+        spinTime += 30; // Interval simulasi
+        if (spinTime >= spinTimeTotal) {
+            stopRotateWheel();
+            return;
+        }
+        
+        // Easing Cubic Out
+        const p = spinTime / spinTimeTotal;
+        const spinAngle = spinAngleStart - (spinAngleStart * (1 - Math.pow(1 - p, 3)));
+        
+        startAngle += (spinAngle * Math.PI / 180);
+        drawWheel();
+        requestAnimationFrame(rotateWheel);
+    }
+
+    function stopRotateWheel() {
+        isSpinning = false;
+        spinBtn.disabled = false;
+        spinBtn.style.opacity = "1";
+
+        // Kalkulasi Pemenang (Pointer di ATAS / -90 derajat atau 270 derajat)
+        // Logika: Canvas 0 ada di Kanan. Pointer ada di Atas.
+        // Kita harus koreksi sudut sebesar 90 derajat.
+        const degrees = startAngle * 180 / Math.PI + 90;
+        const arcd = arc * 180 / Math.PI;
+        const index = Math.floor((360 - degrees % 360) / arcd);
+        
+        currentWinner = names[index];
+        showModal(currentWinner);
+    }
+
+    // --- UTILITIES ---
+    function shuffleNames() {
+        if(isSpinning) return;
+        let arr = nameInput.value.split('\n').filter(n => n.trim() !== '');
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        nameInput.value = arr.join('\n');
+        updateEngine(); saveData();
+    }
+
+    function sortNames() {
+        if(isSpinning) return;
+        let arr = nameInput.value.split('\n').filter(n => n.trim() !== '');
+        arr.sort((a,b) => a.localeCompare(b));
+        nameInput.value = arr.join('\n');
+        updateEngine(); saveData();
+    }
+
+    function resetDefault() {
+        if(confirm("Reset?")) {
+            nameInput.value = defaultNames.join('\n');
+            updateEngine(); saveData();
+            resultsList.innerHTML = '<div class="result-item" style="justify-content: center; color: #555;">Empty</div>';
+        }
+    }
+
+    // Modal & History
+    function showModal(winner) {
+        winnerText.innerText = winner;
+        modal.style.display = 'flex';
+    }
+
+    function closeModal(remove) {
+        modal.style.display = 'none';
+        
+        // Add to history
+        const div = document.createElement('div');
+        div.className = 'result-item';
+        div.innerHTML = `<span><i class="fas fa-trophy text-warning"></i> ${currentWinner}</span> <span>#${resultsList.children.length + 1}</span>`;
+        if(resultsList.innerText.includes("Empty")) resultsList.innerHTML = "";
+        resultsList.insertBefore(div, resultsList.firstChild);
+
+        if(remove) {
+            let arr = nameInput.value.split('\n').filter(n => n.trim() !== '');
+            const idx = arr.indexOf(currentWinner);
+            if(idx > -1) arr.splice(idx, 1);
+            nameInput.value = arr.join('\n');
+            updateEngine(); saveData();
+        }
+    }
+
+    // Storage
+    function loadData() {
+        const d = localStorage.getItem('wheelData_V2');
+        if(d) nameInput.value = d;
+        else nameInput.value = defaultNames.join('\n');
+        updateEngine();
+    }
+    function saveData() { localStorage.setItem('wheelData_V2', nameInput.value); }
+
+</script>
+</body>
+</html>
