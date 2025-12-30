@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheel of Names Final v4</title>
+    <title>Wheel of Names Responsive</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         /* --- GLOBAL RESET --- */
         * { box-sizing: border-box; outline: none; user-select: none; }
         body {
-            margin: 0; padding: 0;
+            margin: 0;
+            padding: 0;
             font-family: 'Roboto', sans-serif;
             background: radial-gradient(circle at center, #2c3e50 0%, #121212 100%);
             color: white;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: hidden; /* Default untuk desktop: tidak ada scroll */
         }
 
         /* --- NAVBAR --- */
@@ -32,9 +33,10 @@
             flex-shrink: 0;
         }
         .nav-brand { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; color: #fff; }
-        .nav-brand span { color: #3c71eb; font-size: 24px; } /* Updated brand color to match palette blue */
+        .nav-brand span { color: #3c71eb; font-size: 24px; }
         .lang-select {
-            background: #333; color: white; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; cursor: pointer;
+            background: #333;
+            color: white; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; cursor: pointer;
         }
 
         /* --- MAIN LAYOUT --- */
@@ -47,10 +49,12 @@
 
         /* --- CUSTOM TITLE --- */
         .title-wrapper {
-            position: absolute; top: 20px; left: 30px; z-index: 40; display: flex; align-items: center; gap: 10px;
+            position: absolute;
+            top: 20px; left: 30px; z-index: 40; display: flex; align-items: center; gap: 10px;
         }
         .custom-title {
-            font-size: 32px; font-weight: 700; color: #fff; background: transparent; border: none;
+            font-size: 32px;
+            font-weight: 700; color: #fff; background: transparent; border: none;
             border-bottom: 2px dashed rgba(255,255,255,0.3); padding-bottom: 5px; min-width: 250px;
         }
         .custom-title:focus { border-bottom: 2px solid #3c71eb; }
@@ -58,7 +62,8 @@
 
         /* --- WHEEL SECTION --- */
         .wheel-section {
-            flex: 1; display: flex; justify-content: center; align-items: center; position: relative;
+            flex: 1;
+            display: flex; justify-content: center; align-items: center; position: relative;
         }
         .wheel-stage {
             position: relative;
@@ -71,7 +76,8 @@
 
         /* VIGNETTE / 3D EFFECT OVERLAY */
         .wheel-stage::after {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             border-radius: 50%; pointer-events: none;
             background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.3) 85%, rgba(0,0,0,0.5) 100%);
             z-index: 5;
@@ -79,7 +85,8 @@
 
         /* --- CENTER HUB --- */
         .center-hub {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 140px; height: 140px; background: white; border-radius: 50%;
             box-shadow: 0 0 15px rgba(0,0,0,0.4);
             z-index: 10;
@@ -93,7 +100,7 @@
             transform: translateY(-50%);
             width: 0; height: 0; 
             border-top: 30px solid transparent;
-            border-bottom: 30px solid transparent; 
+            border-bottom: 30px solid transparent;
             border-right: 60px solid #eeb41b; /* Initial Yellow */
             filter: drop-shadow(-3px 4px 4px rgba(0,0,0,0.5));
             z-index: 20;
@@ -102,7 +109,8 @@
 
         /* --- CIRCULAR TEXT OVERLAY (SVG) --- */
         .text-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 15;
             animation: pulseText 2s infinite ease-in-out;
             transition: opacity 0.5s;
@@ -110,45 +118,48 @@
         @keyframes pulseText { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
         
         .curve-text {
-            font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 55px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 900; font-size: 55px;
             fill: white; text-transform: uppercase;
             filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.8)); letter-spacing: 4px;
         }
 
         /* --- SIDEBAR --- */
         .sidebar {
-            width: 420px; background-color: #222; 
+            width: 420px;
+            background-color: #222; 
             box-shadow: -5px 0 25px rgba(0,0,0,0.6);
             z-index: 30; display: flex; flex-direction: column; padding: 25px;
-            align-items: center; 
+            align-items: center;
         }
 
         /* Tabs */
         .tabs { display: flex; width: 100%; border-bottom: 2px solid #333; margin-bottom: 20px; }
         .tab-item {
-            flex: 1; text-align: center; padding: 12px; cursor: pointer; color: #888; font-weight: 500;
+            flex: 1;
+            text-align: center; padding: 12px; cursor: pointer; color: #888; font-weight: 500;
         }
         .tab-item.active { color: #3c71eb; border-bottom: 3px solid #3c71eb; font-weight: 700; }
 
         .sidebar-content { width: 100%; display: none; flex-direction: column; align-items: center; flex-grow: 1; }
         .sidebar-content.active { display: flex; }
 
-        /* Toolbar - Fit Row & Blunt Corners */
+        /* Toolbar */
         .toolbar { 
-            display: flex; 
+            display: flex;
             gap: 10px; 
             margin-bottom: 20px; 
             width: 100%; 
         }
         .btn {
-            border: none; 
-            border-radius: 8px; /* Blunt corners */
-            padding: 12px 10px; 
+            border: none;
+            border-radius: 8px;
+            padding: 12px 10px;
             font-weight: 600; 
             cursor: pointer;
             color: white; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            flex: 1; /* Equal width */
+            flex: 1;
             text-align: center;
             display: flex;
             justify-content: center;
@@ -161,21 +172,25 @@
 
         /* Options Panel */
         .options-box {
-            background: #2a2a2a; padding: 20px; border-radius: 12px; margin-bottom: 20px;
+            background: #2a2a2a;
+            padding: 20px; border-radius: 12px; margin-bottom: 20px;
             display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center;
         }
         
         .switch-container {
-            display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 14px; color: #ddd;
+            display: flex;
+            align-items: center; justify-content: space-between; width: 100%; font-size: 14px; color: #ddd;
         }
         .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            position: absolute;
+            cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
             background-color: #555; transition: .4s; border-radius: 24px;
         }
         .slider:before {
-            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            position: absolute;
+            content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
             background-color: white; transition: .4s; border-radius: 50%;
         }
         input:checked + .slider { background-color: #3c71eb; }
@@ -184,11 +199,13 @@
         /* Spin Strength Control */
         .strength-label { font-size: 13px; color: #888; margin-bottom: 8px; display:block; }
         .speed-control { 
-            display: flex; gap: 5px; background: #333; padding: 6px; border-radius: 25px; 
+            display: flex;
+            gap: 5px; background: #333; padding: 6px; border-radius: 25px; 
             width: 100%; justify-content: space-between;
         }
         .speed-opt { 
-            cursor: pointer; padding: 6px 10px; border-radius: 20px; font-size: 11px; color: #aaa; text-align: center; flex: 1;
+            cursor: pointer;
+            padding: 6px 10px; border-radius: 20px; font-size: 11px; color: #aaa; text-align: center; flex: 1;
             transition: all 0.2s; white-space: nowrap;
         }
         .speed-opt:hover { background: rgba(255,255,255,0.1); }
@@ -196,115 +213,122 @@
 
         /* Input Wrapper */
         .input-wrapper {
-            flex-grow: 1; width: 100%; background: #1e1e1e; border: 2px solid #333; border-radius: 12px; overflow: hidden; display: flex;
+            flex-grow: 1;
+            width: 100%; background: #1e1e1e; border: 2px solid #333; border-radius: 12px; overflow: hidden; display: flex;
         }
         #nameInput {
-            width: 100%; height: 100%; background: transparent; border: none; color: #eee; padding: 15px;
-            font-size: 15px; font-family: 'Roboto', sans-serif; resize: none; line-height: 1.6; text-align: left;
+            width: 100%;
+            height: 100%; background: transparent; border: none; color: #eee; padding: 15px;
+            font-size: 15px; font-family: 'Roboto', sans-serif; resize: none; line-height: 1.6;
+            text-align: left;
         }
 
         /* Results */
         .results-list {
-            width: 100%; flex-grow: 1; overflow-y: auto; background: #1e1e1e; border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: left;
+            width: 100%;
+            flex-grow: 1; overflow-y: auto; background: #1e1e1e; border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: left;
         }
         .result-item { padding: 8px 0; border-bottom: 1px solid #333; color: #ddd; font-size: 14px; }
 
         /* --- MODAL --- */
         .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); z-index: 100; justify-content: center; align-items: center;
         }
         .modal-content {
-            background: #2a2a2a; color: #eee; padding: 40px; border-radius: 20px; text-align: center; min-width: 450px;
+            background: #2a2a2a;
+            color: #eee; padding: 40px; border-radius: 20px; text-align: center; min-width: 450px;
             animation: popIn 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         @keyframes popIn { from {transform: scale(0.8); opacity:0;} to {transform: scale(1); opacity:1;} }
         .winner-name { font-size: 4rem; font-weight: 900; color: #3c71eb; margin: 10px 0 30px 0; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        /* --- MOBILE RESPONSIVENESS (Tambahan Baru) --- */
+        /* ========================================= */
+        /* === MOBILE RESPONSIVENESS (PERBAIKAN) === */
+        /* ========================================= */
         @media screen and (max-width: 768px) {
-            /* Ubah layout body agar bisa di-scroll */
             body {
                 height: auto;
-                overflow-y: auto; /* Izinkan scroll vertikal */
+                overflow-y: auto; /* Izinkan scroll vertikal di HP */
             }
 
-            /* Container utama jadi vertikal */
             .main-container {
-                flex-direction: column;
+                flex-direction: column; /* Tumpuk roda dan menu ke bawah */
                 height: auto;
                 overflow: visible;
             }
 
-            /* Judul tidak lagi absolute (mengambang), tapi masuk ke aliran dokumen */
             .title-wrapper {
                 position: relative;
-                top: 0;
-                left: 0;
+                top: 0; left: 0;
                 width: 100%;
                 justify-content: center;
-                margin-top: 15px;
-                margin-bottom: 10px;
-                z-index: 60; /* Pastikan di atas layer lain */
-            }
-            
-            .custom-title {
-                text-align: center;
-                font-size: 24px; /* Kecilkan font judul */
-                width: auto;
-                min-width: 200px;
+                margin: 15px 0;
+                padding: 0 10px;
             }
 
-            /* Bagian Roda */
+            .custom-title {
+                text-align: center;
+                font-size: 24px;
+                width: auto;
+            }
+
             .wheel-section {
-                min-height: 50vh; /* Tinggi minimal setengah layar */
-                padding: 10px;
+                min-height: auto;
+                padding: 20px 0;
                 overflow: visible;
             }
 
             .wheel-stage {
-                /* Ubah ukuran roda berdasarkan lebar layar HP, bukan tinggi */
-                width: 85vw;
-                height: 85vw;
+                width: 90vw; /* Gunakan 90% lebar layar HP */
+                height: 90vw;
                 max-width: 400px;
                 max-height: 400px;
+                margin-bottom: 20px;
             }
 
-            /* Teks overlay (CLICK TO SPIN) disesuaikan */
-            .curve-text {
-                font-size: 40px; /* Kecilkan font di dalam roda */
-            }
-
-            /* Sidebar/Kontrol */
             .sidebar {
-                width: 100%; /* Lebar penuh */
+                width: 100%; /* Sidebar memenuhi lebar */
                 height: auto;
-                box-shadow: 0 -4px 20px rgba(0,0,0,0.5); /* Bayangan ke atas */
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
                 padding: 20px;
-                z-index: 55;
+                border-top: 1px solid #333;
             }
 
-            /* Tombol-tombol di sidebar */
-            .toolbar {
-                flex-wrap: wrap; /* Izinkan tombol turun ke bawah jika sempit */
+            .sidebar-content {
+                min-height: 400px; /* Beri ruang untuk input di HP */
             }
             
-            /* Modal Pemenang */
+            .input-wrapper {
+                min-height: 200px;
+            }
+
+            .curve-text {
+                font-size: 40px; /* Kecilkan teks putar agar muat */
+            }
+            
+            .center-hub {
+                width: 25%;
+                height: 25%;
+            }
+
             .modal-content {
-                min-width: 90%; /* Modal menyesuaikan lebar HP */
+                min-width: 90%;
                 padding: 20px;
+                margin: 10px;
             }
             .winner-name {
-                font-size: 2.5rem; /* Kecilkan teks pemenang */
+                font-size: 2.5rem;
+                word-wrap: break-word;
             }
         }
-
     </style>
 </head>
 <body>
 
     <header>
-        <div class="nav-brand"><span>●</span> Wheel of Names Final</div>
+        <div class="nav-brand"><span>●</span> Wheel of Names</div>
         <select id="langSel" class="lang-select" onchange="changeLanguage(this.value)">
             <option value="en">English</option>
             <option value="id">Indonesia</option>
@@ -405,7 +429,7 @@ Hanna</textarea>
         const wheelZone = document.getElementById('wheelZone');
 
         // --- SPECIFIC COLOR PALETTE (4 COLORS) ---
-        const palette = ['#3c71eb', '#d81b30', '#eeb41b', '#0b9d2e']; // Blue, Red, Yellow, Green
+        const palette = ['#3c71eb', '#d81b30', '#eeb41b', '#0b9d2e']; 
         
         let colors = [];
         let names = [];
@@ -438,12 +462,10 @@ Hanna</textarea>
             updateNames();
             window.addEventListener('resize', resizeCanvas);
             inputArea.addEventListener('input', updateNames);
-            
             wheelZone.addEventListener('click', startSpin);
             document.addEventListener('keydown', (e) => {
                 if (e.ctrlKey && e.key === 'Enter') startSpin();
             });
-
             requestAnimationFrame(loop);
         }
 
@@ -454,25 +476,13 @@ Hanna</textarea>
         }
 
         function generateSegmentColors() {
-            // Generate colors preventing adjacent duplicates (including first vs last)
             colors = [];
             if (names.length === 0) return;
 
             for (let i = 0; i < names.length; i++) {
-                // Default pattern
                 let color = palette[i % palette.length];
-                
-                // Logic: Ensure current color != previous color
-                // With modulo 4, this is naturally true sequentially, BUT we need to check special cases
-                // if we were randomizing. Since we are sequential:
-                // i%4 is never (i-1)%4. 
-                
-                // The ONLY check needed is the last item vs first item
                 if (i === names.length - 1 && names.length > 1) {
-                    // Check collision with first item (colors[0])
-                    // And check collision with previous item (colors[i-1]) just to be safe if we change logic
                     if (color === colors[0]) {
-                        // Conflict detected. We need a color that is NOT colors[0] AND NOT colors[i-1]
                         for (let p of palette) {
                             if (p !== colors[0] && p !== colors[i-1]) {
                                 color = p;
@@ -504,7 +514,7 @@ Hanna</textarea>
             
             if (names.length === 0) return;
             const sliceAngle = (2 * Math.PI) / names.length;
-            const fontSize = radius / 10; 
+            const fontSize = radius / 10;
 
             for (let i = 0; i < names.length; i++) {
                 const startAngle = currentAngle + (i * sliceAngle);
@@ -549,7 +559,7 @@ Hanna</textarea>
         // --- ANIMATION ---
         function loop() {
             if (isIdle) {
-                currentAngle += 0.002; 
+                currentAngle += 0.002;
             } 
             else if (isSpinning) {
                 currentAngle += spinVelocity;
@@ -588,7 +598,7 @@ Hanna</textarea>
 
             if (document.getElementById('chkPopup').checked) {
                 document.getElementById('winnerText').innerText = winner;
-                document.getElementById('winnerText').style.color = colors[index]; // Match winner color
+                document.getElementById('winnerText').style.color = colors[index]; 
                 document.getElementById('winnerModal').style.display = 'flex';
             } else {
                 finalizeWin(winner);
@@ -643,23 +653,23 @@ Hanna</textarea>
         function clearResults() { results = []; updateResults(); }
         
         function shuffleNames() { 
-            names.sort(() => Math.random() - 0.5); 
+            names.sort(() => Math.random() - 0.5);
             inputArea.value = names.join('\n'); 
             generateSegmentColors(); 
         }
         function sortNames() { 
-            names.sort(); 
+            names.sort();
             inputArea.value = names.join('\n'); 
             generateSegmentColors(); 
         }
         function sortNamesZA() { 
-            names.sort((a, b) => b.localeCompare(a)); 
+            names.sort((a, b) => b.localeCompare(a));
             inputArea.value = names.join('\n'); 
             generateSegmentColors(); 
         }
         
         function setStrength(v, el) { 
-            speedMult = v; 
+            speedMult = v;
             document.querySelectorAll('.speed-opt').forEach(e => e.classList.remove('active'));
             el.classList.add('active');
         }
@@ -692,4 +702,3 @@ Hanna</textarea>
     </script>
 </body>
 </html>
-
