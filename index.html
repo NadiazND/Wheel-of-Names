@@ -221,6 +221,84 @@
         @keyframes popIn { from {transform: scale(0.8); opacity:0;} to {transform: scale(1); opacity:1;} }
         .winner-name { font-size: 4rem; font-weight: 900; color: #3c71eb; margin: 10px 0 30px 0; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
+        /* --- MOBILE RESPONSIVENESS (Tambahan Baru) --- */
+        @media screen and (max-width: 768px) {
+            /* Ubah layout body agar bisa di-scroll */
+            body {
+                height: auto;
+                overflow-y: auto; /* Izinkan scroll vertikal */
+            }
+
+            /* Container utama jadi vertikal */
+            .main-container {
+                flex-direction: column;
+                height: auto;
+                overflow: visible;
+            }
+
+            /* Judul tidak lagi absolute (mengambang), tapi masuk ke aliran dokumen */
+            .title-wrapper {
+                position: relative;
+                top: 0;
+                left: 0;
+                width: 100%;
+                justify-content: center;
+                margin-top: 15px;
+                margin-bottom: 10px;
+                z-index: 60; /* Pastikan di atas layer lain */
+            }
+            
+            .custom-title {
+                text-align: center;
+                font-size: 24px; /* Kecilkan font judul */
+                width: auto;
+                min-width: 200px;
+            }
+
+            /* Bagian Roda */
+            .wheel-section {
+                min-height: 50vh; /* Tinggi minimal setengah layar */
+                padding: 10px;
+                overflow: visible;
+            }
+
+            .wheel-stage {
+                /* Ubah ukuran roda berdasarkan lebar layar HP, bukan tinggi */
+                width: 85vw;
+                height: 85vw;
+                max-width: 400px;
+                max-height: 400px;
+            }
+
+            /* Teks overlay (CLICK TO SPIN) disesuaikan */
+            .curve-text {
+                font-size: 40px; /* Kecilkan font di dalam roda */
+            }
+
+            /* Sidebar/Kontrol */
+            .sidebar {
+                width: 100%; /* Lebar penuh */
+                height: auto;
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.5); /* Bayangan ke atas */
+                padding: 20px;
+                z-index: 55;
+            }
+
+            /* Tombol-tombol di sidebar */
+            .toolbar {
+                flex-wrap: wrap; /* Izinkan tombol turun ke bawah jika sempit */
+            }
+            
+            /* Modal Pemenang */
+            .modal-content {
+                min-width: 90%; /* Modal menyesuaikan lebar HP */
+                padding: 20px;
+            }
+            .winner-name {
+                font-size: 2.5rem; /* Kecilkan teks pemenang */
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -614,3 +692,4 @@ Hanna</textarea>
     </script>
 </body>
 </html>
+
