@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheel of Names Responsive</title>
+    <title>Wheel of Names - Light Mode</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         /* --- GLOBAL RESET --- */
@@ -12,31 +12,38 @@
             margin: 0;
             padding: 0;
             font-family: 'Roboto', sans-serif;
-            background: radial-gradient(circle at center, #2c3e50 0%, #121212 100%);
-            color: white;
+            /* UBAH: Background terang */
+            background: radial-gradient(circle at center, #f0f4f8 0%, #dbe4ea 100%);
+            color: #333; /* UBAH: Teks gelap */
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Default untuk desktop: tidak ada scroll */
+            overflow: hidden; 
         }
 
         /* --- NAVBAR --- */
         header {
             height: 60px;
-            background-color: #1f1f1f;
+            /* UBAH: Header putih */
+            background-color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Shadow lebih halus */
             z-index: 50;
             flex-shrink: 0;
         }
-        .nav-brand { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; color: #fff; }
+        .nav-brand { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;
+            color: #333; /* UBAH */ }
         .nav-brand span { color: #3c71eb; font-size: 24px; }
+        
         .lang-select {
-            background: #333;
-            color: white; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; cursor: pointer;
+            /* UBAH: Select terang */
+            background: #f8f9fa;
+            color: #333; 
+            border: 1px solid #ccc; 
+            padding: 5px 10px; border-radius: 4px; cursor: pointer;
         }
 
         /* --- MAIN LAYOUT --- */
@@ -54,11 +61,14 @@
         }
         .custom-title {
             font-size: 32px;
-            font-weight: 700; color: #fff; background: transparent; border: none;
-            border-bottom: 2px dashed rgba(255,255,255,0.3); padding-bottom: 5px; min-width: 250px;
+            font-weight: 700; 
+            color: #333; /* UBAH */
+            background: transparent; border: none;
+            border-bottom: 2px dashed rgba(0,0,0,0.2); 
+            padding-bottom: 5px; min-width: 250px;
         }
         .custom-title:focus { border-bottom: 2px solid #3c71eb; }
-        .edit-icon { font-size: 20px; color: #aaa; }
+        .edit-icon { font-size: 20px; color: #888; } /* UBAH */
 
         /* --- WHEEL SECTION --- */
         .wheel-section {
@@ -70,7 +80,8 @@
             width: 85vh; height: 85vh;
             max-width: 85vw; max-height: 85vw;
             border-radius: 50%;
-            box-shadow: 0 0 50px rgba(0,0,0,0.6);
+            /* UBAH: Shadow wheel lebih soft */
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
         canvas { width: 100%; height: 100%; transform: rotate(0deg); border-radius: 50%; }
 
@@ -79,7 +90,8 @@
             content: '';
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             border-radius: 50%; pointer-events: none;
-            background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.3) 85%, rgba(0,0,0,0.5) 100%);
+            /* UBAH: Gradient overlay lebih transparan agar warna cerah */
+            background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.1) 85%, rgba(0,0,0,0.3) 100%);
             z-index: 5;
         }
 
@@ -88,7 +100,7 @@
             position: absolute;
             top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 140px; height: 140px; background: white; border-radius: 50%;
-            box-shadow: 0 0 15px rgba(0,0,0,0.4);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
             z-index: 10;
         }
 
@@ -101,8 +113,8 @@
             width: 0; height: 0; 
             border-top: 30px solid transparent;
             border-bottom: 30px solid transparent;
-            border-right: 60px solid #eeb41b; /* Initial Yellow */
-            filter: drop-shadow(-3px 4px 4px rgba(0,0,0,0.5));
+            border-right: 60px solid #eeb41b; 
+            filter: drop-shadow(-3px 4px 4px rgba(0,0,0,0.3));
             z-index: 20;
             transition: border-right-color 0.1s linear;
         }
@@ -120,21 +132,24 @@
         .curve-text {
             font-family: 'Roboto', sans-serif;
             font-weight: 900; font-size: 55px;
-            fill: white; text-transform: uppercase;
-            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.8)); letter-spacing: 4px;
+            fill: white; /* Tetap putih agar kontras dengan warna roda */
+            text-transform: uppercase;
+            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5)); letter-spacing: 4px;
         }
 
         /* --- SIDEBAR --- */
         .sidebar {
             width: 420px;
-            background-color: #222; 
-            box-shadow: -5px 0 25px rgba(0,0,0,0.6);
+            /* UBAH: Sidebar putih */
+            background-color: #ffffff; 
+            box-shadow: -5px 0 25px rgba(0,0,0,0.05); /* Shadow halus */
             z-index: 30; display: flex; flex-direction: column; padding: 25px;
             align-items: center;
+            border-left: 1px solid #e0e0e0;
         }
 
         /* Tabs */
-        .tabs { display: flex; width: 100%; border-bottom: 2px solid #333; margin-bottom: 20px; }
+        .tabs { display: flex; width: 100%; border-bottom: 2px solid #eee; margin-bottom: 20px; }
         .tab-item {
             flex: 1;
             text-align: center; padding: 12px; cursor: pointer; color: #888; font-weight: 500;
@@ -145,12 +160,7 @@
         .sidebar-content.active { display: flex; }
 
         /* Toolbar */
-        .toolbar { 
-            display: flex;
-            gap: 10px; 
-            margin-bottom: 20px; 
-            width: 100%; 
-        }
+        .toolbar { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; }
         .btn {
             border: none;
             border-radius: 8px;
@@ -158,7 +168,7 @@
             font-weight: 600; 
             cursor: pointer;
             color: white; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             flex: 1;
             text-align: center;
             display: flex;
@@ -172,26 +182,28 @@
 
         /* Options Panel */
         .options-box {
-            background: #2a2a2a;
+            /* UBAH: Panel opsi abu-abu sangat terang */
+            background: #f8f9fa;
+            border: 1px solid #eee;
             padding: 20px; border-radius: 12px; margin-bottom: 20px;
             display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center;
         }
         
         .switch-container {
-            display: flex;
-            align-items: center; justify-content: space-between; width: 100%; font-size: 14px; color: #ddd;
+            display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 14px; 
+            color: #555; /* UBAH */
         }
         .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
-            position: absolute;
-            cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #555; transition: .4s; border-radius: 24px;
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; /* UBAH: Slider inactive lebih terang */
+            transition: .4s; border-radius: 24px;
         }
         .slider:before {
-            position: absolute;
-            content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
             background-color: white; transition: .4s; border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
         input:checked + .slider { background-color: #3c71eb; }
         input:checked + .slider:before { transform: translateX(26px); }
@@ -199,129 +211,77 @@
         /* Spin Strength Control */
         .strength-label { font-size: 13px; color: #888; margin-bottom: 8px; display:block; }
         .speed-control { 
-            display: flex;
-            gap: 5px; background: #333; padding: 6px; border-radius: 25px; 
+            display: flex; gap: 5px; 
+            background: #e9ecef; /* UBAH: Background toggle */
+            padding: 6px; border-radius: 25px; 
             width: 100%; justify-content: space-between;
         }
         .speed-opt { 
-            cursor: pointer;
-            padding: 6px 10px; border-radius: 20px; font-size: 11px; color: #aaa; text-align: center; flex: 1;
+            cursor: pointer; padding: 6px 10px; border-radius: 20px; font-size: 11px; 
+            color: #666; /* UBAH */
+            text-align: center; flex: 1;
             transition: all 0.2s; white-space: nowrap;
         }
-        .speed-opt:hover { background: rgba(255,255,255,0.1); }
-        .speed-opt.active { background: #3c71eb; color: white; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .speed-opt:hover { background: rgba(0,0,0,0.05); }
+        .speed-opt.active { background: #3c71eb; color: white; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
         /* Input Wrapper */
         .input-wrapper {
-            flex-grow: 1;
-            width: 100%; background: #1e1e1e; border: 2px solid #333; border-radius: 12px; overflow: hidden; display: flex;
+            flex-grow: 1; width: 100%; 
+            background: #ffffff; /* UBAH */
+            border: 2px solid #e0e0e0; /* UBAH */
+            border-radius: 12px; overflow: hidden; display: flex;
         }
         #nameInput {
-            width: 100%;
-            height: 100%; background: transparent; border: none; color: #eee; padding: 15px;
+            width: 100%; height: 100%; background: transparent; border: none; 
+            color: #333; /* UBAH: Teks input hitam */
+            padding: 15px;
             font-size: 15px; font-family: 'Roboto', sans-serif; resize: none; line-height: 1.6;
             text-align: left;
         }
+        #nameInput:focus { background: #fafafa; }
 
         /* Results */
         .results-list {
-            width: 100%;
-            flex-grow: 1; overflow-y: auto; background: #1e1e1e; border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: left;
+            width: 100%; flex-grow: 1; overflow-y: auto; 
+            background: #ffffff; /* UBAH */
+            border: 2px solid #e0e0e0; /* UBAH */
+            border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: left;
         }
-        .result-item { padding: 8px 0; border-bottom: 1px solid #333; color: #ddd; font-size: 14px; }
+        .result-item { padding: 8px 0; border-bottom: 1px solid #eee; color: #333; font-size: 14px; } /* UBAH */
 
         /* --- MODAL --- */
         .modal {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 100; justify-content: center; align-items: center;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); /* Overlay sedikit lebih terang */
+            z-index: 100; justify-content: center; align-items: center;
         }
         .modal-content {
-            background: #2a2a2a;
-            color: #eee; padding: 40px; border-radius: 20px; text-align: center; min-width: 450px;
-            animation: popIn 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: #ffffff; /* UBAH: Modal putih */
+            color: #333; /* UBAH */
+            padding: 40px; border-radius: 20px; text-align: center; min-width: 450px;
+            animation: popIn 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
         @keyframes popIn { from {transform: scale(0.8); opacity:0;} to {transform: scale(1); opacity:1;} }
-        .winner-name { font-size: 4rem; font-weight: 900; color: #3c71eb; margin: 10px 0 30px 0; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .winner-name { font-size: 4rem; font-weight: 900; color: #3c71eb; margin: 10px 0 30px 0; text-shadow: none; } /* UBAH */
 
         /* ========================================= */
-        /* === MOBILE RESPONSIVENESS (PERBAIKAN) === */
+        /* === MOBILE RESPONSIVENESS === */
         /* ========================================= */
         @media screen and (max-width: 768px) {
-            body {
-                height: auto;
-                overflow-y: auto; /* Izinkan scroll vertikal di HP */
-            }
-
-            .main-container {
-                flex-direction: column; /* Tumpuk roda dan menu ke bawah */
-                height: auto;
-                overflow: visible;
-            }
-
-            .title-wrapper {
-                position: relative;
-                top: 0; left: 0;
-                width: 100%;
-                justify-content: center;
-                margin: 15px 0;
-                padding: 0 10px;
-            }
-
-            .custom-title {
-                text-align: center;
-                font-size: 24px;
-                width: auto;
-            }
-
-            .wheel-section {
-                min-height: auto;
-                padding: 20px 0;
-                overflow: visible;
-            }
-
-            .wheel-stage {
-                width: 90vw; /* Gunakan 90% lebar layar HP */
-                height: 90vw;
-                max-width: 400px;
-                max-height: 400px;
-                margin-bottom: 20px;
-            }
-
-            .sidebar {
-                width: 100%; /* Sidebar memenuhi lebar */
-                height: auto;
-                box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
-                padding: 20px;
-                border-top: 1px solid #333;
-            }
-
-            .sidebar-content {
-                min-height: 400px; /* Beri ruang untuk input di HP */
-            }
-            
-            .input-wrapper {
-                min-height: 200px;
-            }
-
-            .curve-text {
-                font-size: 40px; /* Kecilkan teks putar agar muat */
-            }
-            
-            .center-hub {
-                width: 25%;
-                height: 25%;
-            }
-
-            .modal-content {
-                min-width: 90%;
-                padding: 20px;
-                margin: 10px;
-            }
-            .winner-name {
-                font-size: 2.5rem;
-                word-wrap: break-word;
-            }
+            body { height: auto; overflow-y: auto; }
+            .main-container { flexDirection: column; height: auto; overflow: visible; }
+            .title-wrapper { position: relative; top: 0; left: 0; width: 100%; justify-content: center; margin: 15px 0; padding: 0 10px; }
+            .custom-title { text-align: center; font-size: 24px; width: auto; }
+            .wheel-section { min-height: auto; padding: 20px 0; overflow: visible; }
+            .wheel-stage { width: 90vw; height: 90vw; max-width: 400px; max-height: 400px; margin-bottom: 20px; }
+            .sidebar { width: 100%; height: auto; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); padding: 20px; border-top: 1px solid #eee; }
+            .sidebar-content { min-height: 400px; }
+            .input-wrapper { min-height: 200px; }
+            .curve-text { font-size: 40px; }
+            .center-hub { width: 25%; height: 25%; }
+            .modal-content { min-width: 90%; padding: 20px; margin: 10px; }
+            .winner-name { font-size: 2.5rem; word-wrap: break-word; }
         }
     </style>
 </head>
@@ -405,7 +365,7 @@ Hanna</textarea>
 
             <div id="results-content" class="sidebar-content">
                 <div class="results-list" id="resultsListContainer">
-                    <div style="color:#666; font-style:italic; text-align:center;" id="txtNoRes">No results yet.</div>
+                    <div style="color:#888; font-style:italic; text-align:center;" id="txtNoRes">No results yet.</div>
                 </div>
                 <button class="btn btn-red" onclick="clearResults()" id="btnClear">Clear Results</button>
             </div>
@@ -534,7 +494,7 @@ Hanna</textarea>
                 ctx.translate(cx, cy);
                 ctx.rotate(startAngle + sliceAngle / 2);
                 ctx.textAlign = "right";
-                ctx.fillStyle = "white";
+                ctx.fillStyle = "white"; // Tetap putih agar kontras di roda warna-warni
                 ctx.font = "bold " + fontSize + "px Arial";
                 ctx.shadowColor = "rgba(0,0,0,0.4)";
                 ctx.shadowBlur = 4;
@@ -639,7 +599,7 @@ Hanna</textarea>
             const noResText = document.getElementById('langSel').value === 'en' ? "No results yet." : "Belum ada hasil.";
             list.innerHTML = '';
             if(results.length === 0) {
-                list.innerHTML = `<div style="color:#666; font-style:italic; text-align:center;" id="txtNoRes">${noResText}</div>`;
+                list.innerHTML = `<div style="color:#888; font-style:italic; text-align:center;" id="txtNoRes">${noResText}</div>`;
                 return;
             }
             [...results].reverse().forEach((r, i) => {
