@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Wheel of Names - Light Mobile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheel of Names - Zen Mode</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         /* --- GLOBAL RESET --- */
@@ -16,7 +17,7 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Desktop default: no scroll */
+            overflow: hidden; 
         }
 
         /* --- NAVBAR --- */
@@ -30,7 +31,11 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             z-index: 50;
             flex-shrink: 0;
+            transition: margin-top 0.3s ease;
         }
+        /* Class untuk menyembunyikan navbar saat mode fullscreen */
+        header.hidden { margin-top: -60px; }
+
         .nav-brand { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: #333; }
         .nav-brand span { color: #3c71eb; font-size: 22px; }
         
@@ -49,17 +54,22 @@
             height: calc(100vh - 60px);
             position: relative;
             overflow: hidden;
+            transition: height 0.3s ease;
         }
+        /* Saat header hidden, main container full height */
+        .main-container.fullscreen { height: 100vh; }
 
         /* --- CUSTOM TITLE --- */
         .title-wrapper {
             position: absolute;
             top: 20px; left: 30px; z-index: 40; display: flex; align-items: center; gap: 10px;
+            transition: opacity 0.3s;
         }
+        /* Sembunyikan judul saat mode zen/fullscreen agar bersih */
+        .title-wrapper.hidden { opacity: 0; pointer-events: none; }
+
         .custom-title {
-            font-size: 32px;
-            font-weight: 700; 
-            color: #333; 
+            font-size: 32px; font-weight: 700; color: #333; 
             background: transparent; border: none;
             border-bottom: 2px dashed rgba(0,0,0,0.2); 
             padding-bottom: 5px; min-width: 250px;
@@ -72,10 +82,11 @@
             flex: 1;
             display: flex; justify-content: center; align-items: center; position: relative;
             padding: 20px;
+            transition: all 0.3s ease;
         }
         .wheel-stage {
             position: relative;
-            width: 80vh; height: 80vh; /* Base size desktop */
+            width: 80vh; height: 80vh; 
             max-width: 80vw; max-height: 80vw;
             border-radius: 50%;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
@@ -92,7 +103,6 @@
             z-index: 5;
         }
 
-        /* --- CENTER HUB --- */
         .center-hub {
             position: absolute;
             top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -101,12 +111,9 @@
             z-index: 10;
         }
 
-        /* --- POINTER --- */
         .pointer {
             position: absolute;
-            right: -12px; 
-            top: 50%;
-            transform: translateY(-50%);
+            right: -12px; top: 50%; transform: translateY(-50%);
             width: 0; height: 0; 
             border-top: 25px solid transparent;
             border-bottom: 25px solid transparent;
@@ -116,10 +123,8 @@
             transition: border-right-color 0.1s linear;
         }
 
-        /* --- CIRCULAR TEXT OVERLAY --- */
         .text-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 15;
             animation: pulseText 2s infinite ease-in-out;
             transition: opacity 0.5s;
@@ -129,8 +134,7 @@
         .curve-text {
             font-family: 'Roboto', sans-serif;
             font-weight: 900; font-size: 55px;
-            fill: white; 
-            text-transform: uppercase;
+            fill: white; text-transform: uppercase;
             filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5)); letter-spacing: 4px;
         }
 
@@ -142,106 +146,85 @@
             z-index: 30; display: flex; flex-direction: column; padding: 20px;
             align-items: center;
             border-left: 1px solid #e0e0e0;
+            transition: margin-right 0.3s ease, opacity 0.3s ease; /* Animation Slide */
+        }
+        
+        /* Class Hidden Sidebar (Slide Out) */
+        .sidebar.hidden {
+            margin-right: -400px; /* Slide ke kanan layar */
+            opacity: 0;
+            display: none; /* Hide sepenuhnya agar tidak makan tempat */
         }
 
         /* Tabs */
         .tabs { display: flex; width: 100%; border-bottom: 2px solid #eee; margin-bottom: 15px; }
-        .tab-item {
-            flex: 1;
-            text-align: center; padding: 10px; cursor: pointer; color: #888; font-weight: 500; font-size: 14px;
-        }
+        .tab-item { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: #888; font-weight: 500; font-size: 14px; }
         .tab-item.active { color: #3c71eb; border-bottom: 3px solid #3c71eb; font-weight: 700; }
 
         .sidebar-content { width: 100%; display: none; flex-direction: column; align-items: center; flex-grow: 1; }
         .sidebar-content.active { display: flex; }
 
-        /* Toolbar */
-        .toolbar { display: flex; gap: 8px; margin-bottom: 15px; width: 100%; }
+        .toolbar { display: flex; gap: 8px; margin-bottom: 10px; width: 100%; }
         .btn {
-            border: none;
-            border-radius: 8px;
-            padding: 10px 8px;
-            font-weight: 600; 
-            cursor: pointer;
-            color: white; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            flex: 1;
-            text-align: center;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 12px;
+            border: none; border-radius: 8px; padding: 10px 8px; font-weight: 600; 
+            cursor: pointer; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex: 1; text-align: center; display: flex; justify-content: center; align-items: center; font-size: 12px;
         }
         .btn-blue { background: #3c71eb; }
         .btn-blue:active { background: #3367d6; transform: translateY(1px); }
         .btn-red { background: #d81b30; flex: 0 0 auto; width: 100%; margin-top: 10px; border-radius: 8px;}
 
-        /* Options Panel */
-        .options-box {
-            background: #f8f9fa;
-            border: 1px solid #eee;
-            padding: 15px; border-radius: 12px; margin-bottom: 15px;
-            display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center;
-        }
+        /* Options Toggle inside sidebar */
+        .options-toggle { width: 100%; text-align: right; margin-bottom: 5px; font-size: 12px; color: #3c71eb; cursor: pointer; font-weight: 600; user-select: none; }
+        .options-toggle:hover { text-decoration: underline; }
+        .options-box { background: #f8f9fa; border: 1px solid #eee; padding: 15px; border-radius: 12px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; overflow: hidden; transition: all 0.3s ease; max-height: 500px; opacity: 1; }
+        .options-box.hidden-opt { margin-bottom: 0; padding: 0 15px; max-height: 0; opacity: 0; border: none; }
         
-        .switch-container {
-            display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 13px; color: #555;
-        }
+        .switch-container { display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 13px; color: #555; }
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc; transition: .4s; border-radius: 20px;
-        }
-        .slider:before {
-            position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px;
-            background-color: white; transition: .4s; border-radius: 50%;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
         input:checked + .slider { background-color: #3c71eb; }
         input:checked + .slider:before { transform: translateX(20px); }
-
-        /* Spin Strength */
+        
         .strength-label { font-size: 12px; color: #888; margin-bottom: 5px; display:block; }
-        .speed-control { 
-            display: flex; gap: 3px; background: #e9ecef; padding: 4px; border-radius: 25px; 
-            width: 100%; justify-content: space-between;
-        }
-        .speed-opt { 
-            cursor: pointer; padding: 5px 0; border-radius: 20px; font-size: 10px; 
-            color: #666; text-align: center; flex: 1; transition: all 0.2s; white-space: nowrap;
-        }
+        .speed-control { display: flex; gap: 3px; background: #e9ecef; padding: 4px; border-radius: 25px; width: 100%; justify-content: space-between; }
+        .speed-opt { cursor: pointer; padding: 5px 0; border-radius: 20px; font-size: 10px; color: #666; text-align: center; flex: 1; transition: all 0.2s; white-space: nowrap; }
         .speed-opt.active { background: #3c71eb; color: white; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-        /* Input Wrapper */
-        .input-wrapper {
-            flex-grow: 1; width: 100%; background: #ffffff; 
-            border: 2px solid #e0e0e0; border-radius: 12px; overflow: hidden; display: flex;
-            min-height: 150px; /* Min height agar tidak gepeng di mobile */
-        }
-        #nameInput {
-            width: 100%; height: 100%; background: transparent; border: none; 
-            color: #333; padding: 15px; font-size: 14px; 
-            font-family: 'Roboto', sans-serif; resize: none; line-height: 1.6; text-align: left;
-        }
+        .input-wrapper { flex-grow: 1; width: 100%; background: #ffffff; border: 2px solid #e0e0e0; border-radius: 12px; overflow: hidden; display: flex; min-height: 150px; transition: min-height 0.3s; }
+        .options-box.hidden-opt ~ .input-wrapper { min-height: 300px; }
+        #nameInput { width: 100%; height: 100%; background: transparent; border: none; color: #333; padding: 15px; font-size: 14px; font-family: 'Roboto', sans-serif; resize: none; line-height: 1.6; text-align: left; }
 
-        /* Results */
-        .results-list {
-            width: 100%; flex-grow: 1; overflow-y: auto; background: #ffffff; 
-            border: 2px solid #e0e0e0; border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: left;
-            min-height: 200px;
-        }
+        .results-list { width: 100%; flex-grow: 1; overflow-y: auto; background: #ffffff; border: 2px solid #e0e0e0; border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: left; min-height: 200px; }
         .result-item { padding: 8px 0; border-bottom: 1px solid #eee; color: #333; font-size: 14px; }
 
+        /* --- FLOATING MENU BUTTON (NEW) --- */
+        .fab-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 55px;
+            height: 55px;
+            background-color: #3c71eb;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 200;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .fab-toggle:hover { transform: scale(1.1); background-color: #3367d6; }
+        .fab-toggle:active { transform: scale(0.9); }
+
         /* --- MODAL --- */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 100; justify-content: center; align-items: center;
-            padding: 20px; /* Padding agar tidak mentok layar HP */
-        }
-        .modal-content {
-            background: #ffffff; color: #333; padding: 30px 20px; border-radius: 20px; 
-            text-align: center; width: 100%; max-width: 450px;
-            animation: popIn 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: #ffffff; color: #333; padding: 30px 20px; border-radius: 20px; text-align: center; width: 100%; max-width: 450px; animation: popIn 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
         @keyframes popIn { from {transform: scale(0.8); opacity:0;} to {transform: scale(1); opacity:1;} }
         .winner-name { font-size: 3rem; font-weight: 900; color: #3c71eb; margin: 10px 0 20px 0; word-wrap: break-word; line-height: 1.1; }
 
@@ -249,71 +232,30 @@
         /* === MEDIA QUERIES (RESPONSIVE) === */
         /* ========================================= */
         @media screen and (max-width: 768px) {
-            body {
-                height: auto; /* Allow scroll on mobile */
-                overflow-y: auto; 
-            }
-
-            .main-container {
-                flex-direction: column; /* Stack vertikal */
-                height: auto;
-                overflow: visible;
-            }
-
-            /* Title di Mobile */
-            .title-wrapper {
-                position: relative; /* Tidak absolute lagi */
-                top: 0; left: 0; width: 100%;
-                justify-content: center;
-                margin-top: 15px;
-                padding: 0 15px;
-            }
-            .custom-title {
-                text-align: center;
-                font-size: 24px;
-                width: 100%;
-                min-width: auto;
-            }
-
-            /* Roda di Mobile */
-            .wheel-section {
-                padding: 10px 0 30px 0;
-                min-height: auto;
-            }
-            .wheel-stage {
-                width: 90vw; /* Lebar mengikuti layar HP */
-                height: 90vw; /* Tinggi sama dengan lebar (lingkaran) */
-                max-width: 400px;
-                max-height: 400px;
-            }
-            .curve-text { font-size: 45px; } /* Sesuaikan ukuran teks */
+            body { height: auto; overflow-y: auto; }
+            .main-container { flex-direction: column; height: auto; overflow: visible; }
+            /* Jika mode zen di HP, kembalikan ke full screen viewport height */
+            .main-container.fullscreen { height: 100vh; overflow: hidden; justify-content: center;}
             
-            /* Sidebar di Mobile */
-            .sidebar {
-                width: 100%;
-                height: auto;
-                box-shadow: none;
-                border-left: none;
-                border-top: 1px solid #e0e0e0;
-                padding: 20px 15px;
-            }
+            .title-wrapper { position: relative; top: 0; left: 0; width: 100%; justify-content: center; margin-top: 15px; padding: 0 15px; }
+            .custom-title { text-align: center; font-size: 24px; width: 100%; min-width: auto; }
             
-            .input-wrapper, .results-list {
-                min-height: 250px; /* Lebih tinggi agar mudah diketik di HP */
-            }
+            .wheel-section { padding: 10px 0 30px 0; min-height: auto; }
+            .wheel-stage { width: 90vw; height: 90vw; max-width: 400px; max-height: 400px; }
+            
+            .sidebar { width: 100%; height: auto; box-shadow: none; border-left: none; border-top: 1px solid #e0e0e0; padding: 20px 15px; }
+            /* Animasi sidebar di HP slide ke bawah */
+            .sidebar.hidden { margin-right: 0; margin-bottom: -1000px; display: none; }
 
-            .modal-content {
-                padding: 30px 15px;
-            }
-            .winner-name {
-                font-size: 2.5rem;
-            }
+            .input-wrapper, .results-list { min-height: 250px; }
+            .modal-content { padding: 30px 15px; }
+            .winner-name { font-size: 2.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <header>
+    <header id="mainHeader">
         <div class="nav-brand"><span>●</span> Wheel</div>
         <select id="langSel" class="lang-select" onchange="changeLanguage(this.value)">
             <option value="en">English</option>
@@ -321,8 +263,8 @@
         </select>
     </header>
 
-    <div class="main-container">
-        <div class="title-wrapper">
+    <div class="main-container" id="mainContainer">
+        <div class="title-wrapper" id="titleWrapper">
             <input type="text" class="custom-title" value="My Lucky Wheel">
             <span class="edit-icon">✎</span>
         </div>
@@ -343,7 +285,7 @@
             </div>
         </div>
 
-        <div class="sidebar">
+        <div class="sidebar" id="sidebarPanel">
             <div class="tabs">
                 <div class="tab-item active" onclick="switchTab('entries')" id="tabEntries">Entries</div>
                 <div class="tab-item" onclick="switchTab('results')" id="tabResults">Results</div>
@@ -356,7 +298,11 @@
                     <button class="btn btn-blue" onclick="sortNamesZA()" id="btnSortZA">Sort Z-A</button>
                 </div>
 
-                <div class="options-box">
+                <div class="options-toggle" onclick="toggleOptionsBox()">
+                    <span id="txtToggleOptions">▼ Hide Options</span>
+                </div>
+
+                <div class="options-box" id="optionsBox">
                     <div class="switch-container">
                         <span id="lblRemove">Remove after win</span>
                         <label class="switch"><input type="checkbox" id="chkRemove"><span class="slider"></span></label>
@@ -398,6 +344,10 @@ Hanna</textarea>
         </div>
     </div>
 
+    <div class="fab-toggle" onclick="toggleFullscreen()" title="Toggle Sidebar">
+        <span id="iconFab">✕</span>
+    </div>
+
     <div class="modal" id="winnerModal">
         <div class="modal-content">
             <h2 style="color:#888; margin:0;" id="txtWeHaveWinner">We have a winner!</h2>
@@ -424,6 +374,10 @@ Hanna</textarea>
         let isIdle = true; 
         let spinVelocity = 0;
         let speedMult = 1.0;
+        
+        // Toggle States
+        let isOptionsBoxVisible = true; 
+        let isSidebarVisible = true;
 
         const langData = {
             en: {
@@ -431,14 +385,16 @@ Hanna</textarea>
                 lblRemove: "Remove after win", lblPopup: "Show winner popup", lblStrength: "Spin Strength",
                 strLow: "Low", strMed: "Medium", strNorm: "Normal", strFast: "Fast", strVFast: "V.Fast",
                 txtNoRes: "No results yet.", btnClear: "Clear Results", txtWeHaveWinner: "We have a winner!",
-                btnClose: "Close", txtPathClick: "CLICK TO SPIN", txtSubClick: "TAP or press ctrl+enter"
+                btnClose: "Close", txtPathClick: "CLICK TO SPIN", txtSubClick: "TAP or press ctrl+enter",
+                txtHideOpt: "▼ Hide Options", txtShowOpt: "▶ Show Options"
             },
             id: {
                 tabEntries: "Entri", tabResults: "Hasil", btnShuffle: "Acak", btnSort: "Urutkan A-Z", btnSortZA: "Urutkan Z-A",
                 lblRemove: "Hapus setelah menang", lblPopup: "Tampilkan popup", lblStrength: "Kekuatan Putar",
                 strLow: "Lemah", strMed: "Sedang", strNorm: "Normal", strFast: "Cepat", strVFast: "Sgt Cepat",
                 txtNoRes: "Belum ada hasil.", btnClear: "Hapus Hasil", txtWeHaveWinner: "Pemenangnya adalah!",
-                btnClose: "Tutup", txtPathClick: "KLIK UNTUK PUTAR", txtSubClick: "KETUK atau tekan ctrl+enter"
+                btnClose: "Tutup", txtPathClick: "KLIK UNTUK PUTAR", txtSubClick: "KETUK atau tekan ctrl+enter",
+                txtHideOpt: "▼ Sembunyikan Opsi", txtShowOpt: "▶ Tampilkan Opsi"
             }
         };
 
@@ -452,6 +408,55 @@ Hanna</textarea>
                 if (e.ctrlKey && e.key === 'Enter') startSpin();
             });
             requestAnimationFrame(loop);
+        }
+
+        // --- FULLSCREEN TOGGLE (SIDEBAR HIDER) ---
+        function toggleFullscreen() {
+            const sidebar = document.getElementById('sidebarPanel');
+            const mainContainer = document.getElementById('mainContainer');
+            const header = document.getElementById('mainHeader');
+            const title = document.getElementById('titleWrapper');
+            const fabIcon = document.getElementById('iconFab');
+            
+            isSidebarVisible = !isSidebarVisible;
+
+            if (isSidebarVisible) {
+                // SHOW SIDEBAR
+                sidebar.classList.remove('hidden');
+                mainContainer.classList.remove('fullscreen');
+                header.classList.remove('hidden');
+                title.classList.remove('hidden');
+                fabIcon.innerText = "✕"; // Icon Close (X)
+            } else {
+                // HIDE SIDEBAR (ZEN MODE)
+                sidebar.classList.add('hidden');
+                mainContainer.classList.add('fullscreen');
+                header.classList.add('hidden');
+                title.classList.add('hidden');
+                fabIcon.innerText = "☰"; // Icon Menu (Hamburger)
+            }
+            
+            // Wait for transition, then resize canvas to fill space
+            setTimeout(resizeCanvas, 350); 
+        }
+
+        // --- INTERNAL OPTIONS TOGGLE ---
+        function toggleOptionsBox() {
+            const box = document.getElementById('optionsBox');
+            isOptionsBoxVisible = !isOptionsBoxVisible;
+            if (isOptionsBoxVisible) {
+                box.classList.remove('hidden-opt');
+            } else {
+                box.classList.add('hidden-opt');
+            }
+            updateToggleText();
+        }
+
+        function updateToggleText() {
+            const lang = document.getElementById('langSel').value;
+            const d = langData[lang];
+            const txt = document.getElementById('txtToggleOptions');
+            txt.innerText = isOptionsBoxVisible ? d.txtHideOpt : d.txtShowOpt;
         }
 
         function updateNames() {
@@ -675,6 +680,8 @@ Hanna</textarea>
             document.getElementById('btnClose').innerText = d.btnClose;
             document.getElementById('txtPathClick').textContent = d.txtPathClick;
             document.getElementById('txtSubClick').textContent = d.txtSubClick;
+            
+            updateToggleText();
             if(results.length === 0) document.getElementById('txtNoRes').innerText = d.txtNoRes;
         }
 
