@@ -3,45 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheel of Names - Zen Mode</title>
+    <title>Wheel of Names - Zen Mode (Mod)</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         /* --- GLOBAL RESET --- */
         * { box-sizing: border-box; outline: none; user-select: none; -webkit-tap-highlight-color: transparent; }
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Roboto', sans-serif;
             background: radial-gradient(circle at center, #f0f4f8 0%, #dbe4ea 100%);
             color: #333;
             height: 100vh;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
             overflow: hidden; 
         }
 
         /* --- NAVBAR --- */
         header {
-            height: 60px;
-            background-color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            height: 60px; background-color: #ffffff;
+            display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 50;
-            flex-shrink: 0;
+            z-index: 50; flex-shrink: 0;
             transition: margin-top 0.3s ease;
         }
-        /* Class untuk menyembunyikan navbar saat mode fullscreen */
         header.hidden { margin-top: -60px; }
 
         .nav-brand { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: #333; }
         .nav-brand span { color: #3c71eb; font-size: 22px; }
         
         .lang-select {
-            background: #f8f9fa;
-            color: #333; 
+            background: #f8f9fa; color: #333; 
             border: 1px solid #ccc; 
             padding: 5px 8px; border-radius: 4px; cursor: pointer;
             font-size: 14px;
@@ -49,23 +41,19 @@
 
         /* --- MAIN LAYOUT --- */
         .main-container {
-            display: flex;
-            flex: 1;
+            display: flex; flex: 1;
             height: calc(100vh - 60px);
             position: relative;
             overflow: hidden;
             transition: height 0.3s ease;
         }
-        /* Saat header hidden, main container full height */
         .main-container.fullscreen { height: 100vh; }
 
         /* --- CUSTOM TITLE --- */
         .title-wrapper {
-            position: absolute;
-            top: 20px; left: 30px; z-index: 40; display: flex; align-items: center; gap: 10px;
+            position: absolute; top: 20px; left: 30px; z-index: 40; display: flex; align-items: center; gap: 10px;
             transition: opacity 0.3s;
         }
-        /* Sembunyikan judul saat mode zen/fullscreen agar bersih */
         .title-wrapper.hidden { opacity: 0; pointer-events: none; }
 
         .custom-title {
@@ -79,8 +67,7 @@
 
         /* --- WHEEL SECTION --- */
         .wheel-section {
-            flex: 1;
-            display: flex; justify-content: center; align-items: center; position: relative;
+            flex: 1; display: flex; justify-content: center; align-items: center; position: relative;
             padding: 20px;
             transition: all 0.3s ease;
         }
@@ -96,24 +83,20 @@
 
         /* VIGNETTE */
         .wheel-stage::after {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             border-radius: 50%; pointer-events: none;
             background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.1) 85%, rgba(0,0,0,0.3) 100%);
             z-index: 5;
         }
 
         .center-hub {
-            position: absolute;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 18%; height: 18%; background: white; border-radius: 50%;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            z-index: 10;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2); z-index: 10;
         }
 
         .pointer {
-            position: absolute;
-            right: -12px; top: 50%; transform: translateY(-50%);
+            position: absolute; right: -12px; top: 50%; transform: translateY(-50%);
             width: 0; height: 0; 
             border-top: 25px solid transparent;
             border-bottom: 25px solid transparent;
@@ -132,31 +115,23 @@
         @keyframes pulseText { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
         
         .curve-text {
-            font-family: 'Roboto', sans-serif;
-            font-weight: 900; font-size: 55px;
+            font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 55px;
             fill: white; text-transform: uppercase;
             filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5)); letter-spacing: 4px;
         }
 
         /* --- SIDEBAR --- */
         .sidebar {
-            width: 400px;
-            background-color: #ffffff; 
+            width: 400px; background-color: #ffffff; 
             box-shadow: -5px 0 25px rgba(0,0,0,0.05);
             z-index: 30; display: flex; flex-direction: column; padding: 20px;
-            align-items: center;
-            border-left: 1px solid #e0e0e0;
-            transition: margin-right 0.3s ease, opacity 0.3s ease; /* Animation Slide */
+            align-items: center; border-left: 1px solid #e0e0e0;
+            transition: margin-right 0.3s ease, opacity 0.3s ease;
         }
-        
-        /* Class Hidden Sidebar (Slide Out) */
         .sidebar.hidden {
-            margin-right: -400px; /* Slide ke kanan layar */
-            opacity: 0;
-            display: none; /* Hide sepenuhnya agar tidak makan tempat */
+            margin-right: -400px; opacity: 0; display: none;
         }
 
-        /* Tabs */
         .tabs { display: flex; width: 100%; border-bottom: 2px solid #eee; margin-bottom: 15px; }
         .tab-item { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: #888; font-weight: 500; font-size: 14px; }
         .tab-item.active { color: #3c71eb; border-bottom: 3px solid #3c71eb; font-weight: 700; }
@@ -177,7 +152,9 @@
         /* Options Toggle inside sidebar */
         .options-toggle { width: 100%; text-align: right; margin-bottom: 5px; font-size: 12px; color: #3c71eb; cursor: pointer; font-weight: 600; user-select: none; }
         .options-toggle:hover { text-decoration: underline; }
-        .options-box { background: #f8f9fa; border: 1px solid #eee; padding: 15px; border-radius: 12px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; overflow: hidden; transition: all 0.3s ease; max-height: 500px; opacity: 1; }
+        
+        .options-box { background: #f8f9fa; border: 1px solid #eee; padding: 15px; border-radius: 12px;
+            margin-bottom: 15px; display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; overflow: hidden; transition: all 0.3s ease; max-height: 800px; opacity: 1; }
         .options-box.hidden-opt { margin-bottom: 0; padding: 0 15px; max-height: 0; opacity: 0; border: none; }
         
         .switch-container { display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 13px; color: #555; }
@@ -200,23 +177,14 @@
         .results-list { width: 100%; flex-grow: 1; overflow-y: auto; background: #ffffff; border: 2px solid #e0e0e0; border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: left; min-height: 200px; }
         .result-item { padding: 8px 0; border-bottom: 1px solid #eee; color: #333; font-size: 14px; }
 
-        /* --- FLOATING MENU BUTTON (NEW) --- */
+        /* --- FLOATING MENU BUTTON --- */
         .fab-toggle {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 55px;
-            height: 55px;
-            background-color: #3c71eb;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            cursor: pointer;
-            z-index: 200;
+            position: fixed; bottom: 25px; right: 25px;
+            width: 55px; height: 55px;
+            background-color: #3c71eb; color: white;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer; z-index: 200;
             transition: transform 0.2s, background-color 0.2s;
         }
         .fab-toggle:hover { transform: scale(1.1); background-color: #3367d6; }
@@ -228,25 +196,17 @@
         @keyframes popIn { from {transform: scale(0.8); opacity:0;} to {transform: scale(1); opacity:1;} }
         .winner-name { font-size: 3rem; font-weight: 900; color: #3c71eb; margin: 10px 0 20px 0; word-wrap: break-word; line-height: 1.1; }
 
-        /* ========================================= */
-        /* === MEDIA QUERIES (RESPONSIVE) === */
-        /* ========================================= */
+        /* RESPONSIVE */
         @media screen and (max-width: 768px) {
             body { height: auto; overflow-y: auto; }
             .main-container { flex-direction: column; height: auto; overflow: visible; }
-            /* Jika mode zen di HP, kembalikan ke full screen viewport height */
             .main-container.fullscreen { height: 100vh; overflow: hidden; justify-content: center;}
-            
             .title-wrapper { position: relative; top: 0; left: 0; width: 100%; justify-content: center; margin-top: 15px; padding: 0 15px; }
             .custom-title { text-align: center; font-size: 24px; width: 100%; min-width: auto; }
-            
             .wheel-section { padding: 10px 0 30px 0; min-height: auto; }
             .wheel-stage { width: 90vw; height: 90vw; max-width: 400px; max-height: 400px; }
-            
             .sidebar { width: 100%; height: auto; box-shadow: none; border-left: none; border-top: 1px solid #e0e0e0; padding: 20px 15px; }
-            /* Animasi sidebar di HP slide ke bawah */
             .sidebar.hidden { margin-right: 0; margin-bottom: -1000px; display: none; }
-
             .input-wrapper, .results-list { min-height: 250px; }
             .modal-content { padding: 30px 15px; }
             .winner-name { font-size: 2.5rem; }
@@ -322,10 +282,25 @@
                             <div class="speed-opt" onclick="setStrength(1.8, this)" id="strVFast">V.Fast</div>
                         </div>
                     </div>
-                </div>
+
+                    <div id="cheatControls" style="display: none; width: 100%; flex-direction: column; gap: 10px; margin-top: 15px; border-top: 2px dashed #d81b30; padding-top: 10px;">
+                        <div style="color: #d81b30; font-weight: bold; font-size: 12px; text-align: center;">⚠ ADMIN CHEAT MODE ⚠</div>
+                        
+                        <div class="switch-container">
+                            <span>Enable Cheat</span>
+                            <label class="switch"><input type="checkbox" id="chkCheatActive"><span class="slider" style="background-color: #d81b30;"></span></label>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; width: 100%;">
+                            <span style="font-size: 11px; color: #666; margin-bottom: 3px;">Force Winner:</span>
+                            <select id="selCheatWinner" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc; width: 100%;">
+                                </select>
+                        </div>
+                    </div>
+                    </div>
 
                 <div class="input-wrapper">
-                    <textarea id="nameInput" spellcheck="false" placeholder="Type names here...">Ali
+                     <textarea id="nameInput" spellcheck="false" placeholder="Type names here...">Ali
 Beatriz
 Charles
 Diya
@@ -376,7 +351,7 @@ Hanna</textarea>
         let speedMult = 1.0;
         
         // Toggle States
-        let isOptionsBoxVisible = true; 
+        let isOptionsBoxVisible = true;
         let isSidebarVisible = true;
 
         const langData = {
@@ -407,6 +382,38 @@ Hanna</textarea>
             document.addEventListener('keydown', (e) => {
                 if (e.ctrlKey && e.key === 'Enter') startSpin();
             });
+
+            // --- [START] EVENT LISTENER UNTUK MEMBUKA CHEAT (HOLD 3 DETIK) ---
+            const toggleBtn = document.querySelector('.options-toggle');
+            let pressTimer;
+
+            function startPressTimer() {
+                pressTimer = setTimeout(() => {
+                    const cheatPanel = document.getElementById('cheatControls');
+                    // Toggle visibility
+                    if(cheatPanel.style.display === 'none') {
+                        cheatPanel.style.display = 'flex';
+                        updateCheatDropdown(); 
+                        alert("⚠ ADMIN CHEAT MODE ENABLED");
+                    } else {
+                        cheatPanel.style.display = 'none';
+                    }
+                }, 3000); // 3 detik
+            }
+
+            function clearPressTimer() {
+                clearTimeout(pressTimer);
+            }
+
+            // Mouse events
+            toggleBtn.addEventListener('mousedown', startPressTimer);
+            toggleBtn.addEventListener('mouseup', clearPressTimer);
+            toggleBtn.addEventListener('mouseleave', clearPressTimer);
+            // Touch events (untuk HP)
+            toggleBtn.addEventListener('touchstart', startPressTimer);
+            toggleBtn.addEventListener('touchend', clearPressTimer);
+            // --- [END] EVENT LISTENER CHEAT ---
+
             requestAnimationFrame(loop);
         }
 
@@ -419,25 +426,20 @@ Hanna</textarea>
             const fabIcon = document.getElementById('iconFab');
             
             isSidebarVisible = !isSidebarVisible;
-
             if (isSidebarVisible) {
-                // SHOW SIDEBAR
                 sidebar.classList.remove('hidden');
                 mainContainer.classList.remove('fullscreen');
                 header.classList.remove('hidden');
                 title.classList.remove('hidden');
-                fabIcon.innerText = "✕"; // Icon Close (X)
+                fabIcon.innerText = "✕"; 
             } else {
-                // HIDE SIDEBAR (ZEN MODE)
                 sidebar.classList.add('hidden');
                 mainContainer.classList.add('fullscreen');
                 header.classList.add('hidden');
                 title.classList.add('hidden');
-                fabIcon.innerText = "☰"; // Icon Menu (Hamburger)
+                fabIcon.innerText = "☰"; 
             }
-            
-            // Wait for transition, then resize canvas to fill space
-            setTimeout(resizeCanvas, 350); 
+            setTimeout(resizeCanvas, 350);
         }
 
         // --- INTERNAL OPTIONS TOGGLE ---
@@ -462,7 +464,28 @@ Hanna</textarea>
         function updateNames() {
             names = inputArea.value.split('\n').filter(n => n.trim() !== '');
             generateSegmentColors();
+            updateCheatDropdown(); // Update list cheat saat nama berubah
         }
+
+        // --- [START] FUNGSI UPDATE DROPDOWN CHEAT ---
+        function updateCheatDropdown() {
+            const sel = document.getElementById('selCheatWinner');
+            if(!sel) return;
+            const currentVal = sel.value;
+            sel.innerHTML = '';
+            
+            names.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.innerText = name;
+                sel.appendChild(opt);
+            });
+
+            if (names.includes(currentVal)) {
+                sel.value = currentVal;
+            }
+        }
+        // --- [END] FUNGSI CHEAT ---
 
         function generateSegmentColors() {
             colors = [];
@@ -504,7 +527,6 @@ Hanna</textarea>
             if (names.length === 0) return;
             const sliceAngle = (2 * Math.PI) / names.length;
             const fontSize = radius / 10;
-
             for (let i = 0; i < names.length; i++) {
                 const startAngle = currentAngle + (i * sliceAngle);
                 const endAngle = startAngle + sliceAngle;
@@ -565,9 +587,48 @@ Hanna</textarea>
 
         function startSpin() {
             if (isSpinning || names.length < 1) return;
+            
             isIdle = false;
             isSpinning = true;
-            spinVelocity = (Math.random() * 0.3 + 0.4) * speedMult;
+
+            // --- [START] LOGIKA CHEAT ---
+            const cheatActive = document.getElementById('chkCheatActive').checked;
+            const cheatWinner = document.getElementById('selCheatWinner').value;
+            
+            // Cek apakah cheat aktif dan nama pemenang ada di daftar
+            if (cheatActive && cheatWinner && names.includes(cheatWinner)) {
+                
+                const winnerIndex = names.indexOf(cheatWinner);
+                const sliceAngle = (2 * Math.PI) / names.length;
+                
+                // RandomOffset 0.2 s/d 0.8 agar jarum tidak selalu berhenti tepat di tengah (biar natural)
+                const randomOffset = 0.2 + Math.random() * 0.6; 
+                
+                // Sudut absolut target pada putaran lingkaran (0 - 2PI)
+                let targetAngleLocal = (2 * Math.PI) - ((winnerIndex + randomOffset) * sliceAngle);
+                
+                // Normalisasi sudut saat ini
+                let currentAngleNormalized = currentAngle % (2 * Math.PI);
+                if (currentAngleNormalized < 0) currentAngleNormalized += 2 * Math.PI;
+
+                // Hitung jarak yang harus ditempuh
+                let distanceToTarget = targetAngleLocal - currentAngleNormalized;
+                if (distanceToTarget < 0) distanceToTarget += (2 * Math.PI);
+
+                // Tambahkan minimal 5 putaran penuh agar terlihat berputar kencang
+                const extraSpins = 5 * (2 * Math.PI);
+                const totalDistance = distanceToTarget + extraSpins;
+
+                // --- FISIKA MUNDUR ---
+                // V_awal = Distance * (1 - decay). Decay = 0.985
+                spinVelocity = totalDistance * (1 - 0.985);
+
+            } else {
+                // SPIN NORMAL (RANDOM)
+                spinVelocity = (Math.random() * 0.3 + 0.4) * speedMult;
+            }
+            // --- [END] LOGIKA CHEAT ---
+
             overlaySVG.style.opacity = '0';
             setTimeout(() => overlaySVG.style.display = 'none', 500);
         }
@@ -642,16 +703,19 @@ Hanna</textarea>
             names.sort(() => Math.random() - 0.5);
             inputArea.value = names.join('\n'); 
             generateSegmentColors(); 
+            updateCheatDropdown();
         }
         function sortNames() { 
             names.sort();
             inputArea.value = names.join('\n'); 
             generateSegmentColors(); 
+            updateCheatDropdown();
         }
         function sortNamesZA() { 
             names.sort((a, b) => b.localeCompare(a));
             inputArea.value = names.join('\n'); 
             generateSegmentColors(); 
+            updateCheatDropdown();
         }
         
         function setStrength(v, el) { 
